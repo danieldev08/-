@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    background: #eef2f3;
+    overflow: hidden;
+}
+
+.skeleton {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: scale(0.35);
+    transform-origin: top center;
+
+    /* 🔥 добавлено для 3D движения рук */
+    transform-style: preserve-3d;
+    perspective: 800px;
+}
+
+/* Голова */
+.head {
+    position: absolute;
+    top: 100px;
+    left: 270px;
+    width: 327px;
+    height: 496px;
+    background-image: url('media/golova.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+}
+
+/* Туловище */
+.torso {
+    position: absolute;
+    top: 400px;
+    left: 60px;
+    width: 737px;
+    height: 837px;
+    background-image: url('media/telo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform-origin: top center;
+    z-index: 5;
+}
+
+/* Контейнеры рук */
+.arm {
+    position: absolute;
+}
+
+.arm.left {
+    top: 600px;
+    left: 600px;
+}   /* ниже туловища */
+
+.arm.right {
+    top: 600px;
+    left: 45px;
+}
+
+/* Верхняя рука */
+.upper-arm.left, .upper-arm.right {
+    position: relative;
+    transform-origin: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.upper-arm.left {
+    width: 205px;
+    height: 444px;
+    background-image: url('media/levruka1.png');
+    z-index: 1;
+}
+
+.upper-arm.right {
+    width: 204px;
+    height: 458px;
+    background-image: url('media/pravruka1.png');
+    z-index: 1;
+}
+
+/* Предплечье */
+.forearm.left, .forearm.right {
+    position: absolute;
+    transform-origin: top center;
+    z-index: 20;
+
+    /* 🔥 добавлено для 3D эффекта */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.forearm.left {
+    top: 344px;
+    left: 0;
+    width: 164px;
+    height: 382px;
+    background-image: url('media/levruka2.png');
+}
+
+.forearm.right {
+    top: 318px;
+    left: 0;
+    width: 163px;
+    height: 386px;
+    background-image: url('media/pravruka2.png');
+}
+
+/* Кисть */
+.hand.left, .hand.right {
+    position: absolute;
+    transform-origin: top center;
+
+    /* 🔥 добавлено для плавного соединения */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.hand.left {
+    top: 360px;
+    left: 50px;
+    width: 108px;
+    height: 194px;
+    background-image: url('media/levruka3.png');
+    z-index: 1;
+}
+
+.hand.right {
+    top: 350px;
+    left: 0;
+    width: 108px;
+    height: 194px;
+    background-image: url('media/pravruka3.png');
+}
+
+/* Ноги */
+.legs-container {
+    position: absolute;
+    top: 1130px;
+    left: 210px;
+    width: 433px;
+    height: 752px;
+}
+
+.legs-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}

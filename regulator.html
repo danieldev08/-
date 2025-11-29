@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анимированный скелет-регулировщик с уникальными траекториями</title>
+</head>
+<body>
+<style>
+    :root {
+        --car-speed-horizontal: 18s;
+        --car-speed-vertical: 14s;
+        --pedestrian-speed: 12s;
+        --skeleton-transition: 0.8s;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #scene {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        background: url('media/main.png') no-repeat center 60% / 75%;
+        perspective: 1200px;
+    }
+
+    /* === МАШИНЫ ГОРИЗОНТАЛЬНЫЕ === */
+    .car-horizontal {
+        position: absolute;
+        width: 160px;
+        top: 27%;
+        z-index: 10;
+    }
+
+    .car-horizontal.left-to-right {
+        animation: drive-lr var(--car-speed-horizontal) linear infinite;
+    }
+
+    .car-horizontal.right-to-left {
+        animation: drive-rl var(--car-speed-horizontal) linear infinite;
+        transform: scaleX(-1);
+    }
+
+    .car-horizontal.paused {
+        animation-play-state: paused !important;
+    }
+
+    .car-horizontal .car-body {
+        width: 100%;
+        position: relative;
+        bottom: 10px;
+    }
+
+    .car-horizontal .wheel {
+        position: absolute;
+        width: 18%;
+        animation: rotate-wheel 0.5s linear infinite;
+    }
+
+    .car-horizontal .front-wheel { bottom: 5%; right: 10%; }
+    .car-horizontal .back-wheel { bottom: 5%; left: 11%; }
+
+    @keyframes drive-lr {
+        from { transform: translateX(calc(100vw + 220px)); }
+        to { transform: translateX(-220px); }
+    }
+
+    @keyframes drive-rl {
+        from { transform: translateX(-220px) scaleX(-1); }
+        to { transform: translateX(calc(100vw + 220px)) scaleX(-1); }
+    }
+
+    @keyframes rotate-wheel {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(-360deg); }
+    }
+
+    /* === МАШИНЫ ВЕРТИКАЛЬНЫЕ === */
+    .car-vertical {
+        position: absolute;
+        width: 200px;
+        z-index: 5;
+    }
+
+    .car-vertical img {
+        width: 100%;
+        height: auto;
+    }
+
+    .car-vertical.bottom-to-top {
+        animation: drive-bt var(--car-speed-vertical) linear infinite;
+    }
+
+    .car-vertical.top-to-bottom {
+        animation: drive-tb var(--car-speed-vertical) linear infinite;
+    }
+
+    .car-vertical.paused {
+        animation-play-state: paused !important;
+    }
+
+    /* 1. БАЗОВЫЕ (Прямые) ТРАЕКТОРИИ (как вы просили) */
+    /* Движение СНИЗУ ВВЕРХ (Отдаление) */
+    @keyframes drive-bt {
+        from { transform: translate(30vw, 85vh) scale(1.2); }
+        to { transform: translate(50vw, -5vh) scale(0.05); }
+    }
+
+    /* Движение СВЕРХУ ВНИЗ (Приближение) */
+    @keyframes drive-tb {
+        from { transform: translate(43vw, -7vh) scale(0.05); }
+        to { transform: translate(50vw, 85vh) scale(1.2); }
+    }
+
+    /* 2. УНИКАЛЬНЫЕ ТРАЕКТОРИИ (Например, с поворотом) */
+
+    /* УНИКАЛЬНАЯ: Сверху-Вниз (с поворотом влево, с 43vw до 30vw) */
+    .car-vertical-unique-tb {
+        animation: drive-unique-tb var(--car-speed-vertical) linear infinite;
+    }
+    @keyframes drive-unique-tb {
+        0% { transform: translate(39vw, -7vh) scale(0.05) ; }
+        40% { transform: translate(49vw, 30vh) scale(0.5) ; }
+        70% { transform: translate(56vw, 60vh) scale(0.8) ; }
+        100% { transform: translate(60vw, 75vh) scale(1.2) ; }
+    }
+
+    /* УНИКАЛЬНАЯ: Снизу-Вверх (с поворотом вправо, с 30vw до 50vw) */
+    .car-vertical-unique-bt {
+        animation: drive-unique-bt var(--car-speed-vertical) linear infinite;
+    }
+    @keyframes drive-unique-bt {
+        0% { transform: translate(33vw, 85vh) scale(1.2) ; }
+        40% { transform: translate(35vw, 45vh) scale(0.8) ; }
+        70% { transform: translate(38vw, 15vh) scale(0.2) ; }
+        100% { transform: translate(40vw, -5vh) scale(0.05) ; }
+    }
+
+
+    /* === ПЕШЕХОДЫ === */
+    .pedestrian {
+        position: absolute;
+        width: 40px;
+        height: 60px;
+        z-index: 15;
+    }
+
+    .pedestrian-horizontal {
+        animation: walk-horizontal var(--pedestrian-speed) linear infinite;
+        top: 48%;
+    }
+
+    .pedestrian-vertical {
+        animation: walk-vertical var(--pedestrian-speed) linear infinite;
+        left: 49%;
+    }
+
+    .pedestrian.paused {
+        animation-play-state: paused !important;
+    }
+
+    /* Пешеход (визуальные стили) */
+    .pedestrian::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #ff6b6b;
+        border-radius: 50%;
+        top: 0;
+        left: 10px;
+    }
+
+    .pedestrian::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 30px;
+        background: #4ecdc4;
+        top: 22px;
+        left: 12px;
+        border-radius: 5px;
+    }
+
+    @keyframes walk-horizontal {
+        from { left: -60px; }
+        to { left: calc(100vw + 60px); }
+    }
+
+    @keyframes walk-vertical {
+        from { top: -80px; }
+        to { top: calc(100vh + 80px); }
+    }
+
+    /* === СКЕЛЕТ-РЕГУЛИРОВЩИК (ПОЗИЦИОНИРОВАНИЕ И НАСТРОЙКИ ДЛЯ КАЧАНИЯ) === */
+    .skeleton {
+        position: absolute;
+        top: 42vh;
+        left: 43vw;
+        transform: scale(0.12);
+        transform-origin: center center;
+        transform-style: preserve-3d;
+        z-index: 15;
+        transition: none;
+    }
+
+    .head { transition: none; }
+    .arm { transition: none; }
+    .upper-arm, .forearm, .hand { transition: none !important; }
+    .upper-arm, .forearm, .hand { transform: rotate(0deg) !important; }
+
+    /* ВТОРИЧНЫЕ СТИЛИ СКЕЛЕТА */
+    .head {
+        position: absolute;
+        top: 100px;
+        left: 270px;
+        width: 327px;
+        height: 496px;
+        background: url('media/golova.png') no-repeat center / contain;
+        z-index: 10;
+    }
+
+    .torso {
+        position: absolute;
+        top: 400px;
+        left: 60px;
+        width: 737px;
+        height: 837px;
+        background: url('media/telo.png') no-repeat center / contain;
+        transform-origin: top center;
+        z-index: 5;
+    }
+
+    .arm { position: absolute; }
+    .arm.left { top: 600px; left: 600px; }
+    .arm.right { top: 600px; left: 45px; }
+
+    .upper-arm {
+        position: relative;
+        transform-origin: top center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .upper-arm.left {
+        width: 205px;
+        height: 444px;
+        background-image: url('media/levruka1.png');
+    }
+
+    .upper-arm.right {
+        width: 204px;
+        height: 458px;
+        background-image: url('media/pravruka1.png');
+    }
+
+    .forearm {
+        position: absolute;
+        transform-origin: top center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: 20;
+    }
+
+    .forearm.left {
+        top: 344px;
+        left: 0;
+        width: 164px;
+        height: 382px;
+        background-image: url('media/levruka2.png');
+    }
+
+    .forearm.right {
+        top: 318px;
+        left: 0;
+        width: 163px;
+        height: 386px;
+        background-image: url('media/pravruka2.png');
+    }
+
+    .hand {
+        position: absolute;
+        transform-origin: top center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .hand.left {
+        top: 360px;
+        left: 50px;
+        width: 108px;
+        height: 194px;
+        background-image: url('media/levruka3.png');
+    }
+
+    .hand.right {
+        top: 350px;
+        left: 0;
+        width: 108px;
+        height: 194px;
+        background-image: url('media/pravruka3.png');
+    }
+
+    .legs-container {
+        position: absolute;
+        top: 1130px;
+        left: 210px;
+        width: 433px;
+        height: 752px;
+    }
+
+    .legs-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+
+    /* === КНОПКИ УПРАВЛЕНИЯ === */
+    #scenarios-controls {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        pointer-events: auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    #scenarios-controls button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        padding: 14px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        text-align: left;
+        min-width: 220px;
+    }
+
+    #scenarios-controls button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    #scenarios-controls button:active {
+        transform: translateY(0);
+    }
+
+    #scenarios-controls button.active {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.6);
+    }
+
+    .button-label {
+        display: block;
+        font-size: 12px;
+        opacity: 0.8;
+        margin-top: 4px;
+        font-weight: 400;
+    }
+
+    #active-scenario {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        z-index: 9998;
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+<div id="scene">
+    <div id="active-scenario">Сценарий: Не выбран</div>
+
+    <div class="car-horizontal left-to-right" style="animation-delay: 3s; top: 20%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+    <div class="car-horizontal left-to-right" style="animation-delay: 9s; top: 24%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+    <div class="car-horizontal left-to-right" style="animation-delay: 15s; top: 20%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+
+    <div class="car-horizontal right-to-left" style="animation-delay: 0s; top: 33%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+    <div class="car-horizontal right-to-left" style="animation-delay: 6s; top: 33%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+    <div class="car-horizontal right-to-left" style="animation-delay: 12s; top: 29%;">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
+        <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
+        <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
+    </div>
+
+    <div class="car-vertical car-vertical-unique-tb" style="animation-delay: 0s; left: 5%;">
+        <img src="media/car_yogurt_1.png" alt="Car">
+    </div>
+    <div class="car-vertical top-to-bottom" style="animation-delay: 5s; left: 2%;">
+        <img src="media/car_yogurt_1.png" alt="Car">
+    </div>
+    <div class="car-vertical top-to-bottom" style="animation-delay: 10s; left: 2%;">
+        <img src="media/car_yogurt_1.png" alt="Car">
+    </div>
+
+    <div class="car-vertical car-vertical-unique-bt" style="animation-delay: 2s; left: 5%;">
+        <img src="media/car_yogurt_3.png" alt="Car">
+    </div>
+    <div class="car-vertical bottom-to-top" style="animation-delay: 7s; left: -5%;">
+        <img src="media/car_yogurt_3.png" alt="Car">
+    </div>
+    <div class="car-vertical bottom-to-top" style="animation-delay: 12s; left: -5%;">
+        <img src="media/car_yogurt_3.png" alt="Car">
+    </div>
+
+    <div class="pedestrian pedestrian-horizontal" style="animation-delay: 2s;"></div>
+    <div class="pedestrian pedestrian-vertical" style="animation-delay: 6s;"></div>
+
+    <div class="skeleton">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left">
+            <div class="upper-arm left">
+                <div class="forearm left">
+                    <div class="hand left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm right">
+                <div class="forearm right">
+                    <div class="hand right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="legs-container">
+            <img id="legs" src="media/nogi1.png" alt="Legs">
+        </div>
+    </div>
+
+    <div id="scenarios-controls">
+        <button id="btn-gesture-1" data-gesture="1">
+            Жест 1: Руки в стороны
+            <span class="button-label">Едут: лево↔право | Идут пешеходы</span>
+        </button>
+        <button id="btn-gesture-2" data-gesture="2">
+            Жест 2: Правая рука вперед
+            <span class="button-label">Едут: слева все, с груди→направо</span>
+        </button>
+        <button id="btn-gesture-3" data-gesture="3">
+            Жест 3: Рука вверх
+            <span class="button-label">ВСЕ СТОЯТ (красный свет)</span>
+        </button>
+        <button id="btn-gesture-4" data-gesture="4">
+            Жест 4: Свободный режим
+            <span class="button-label">Едут: верх↔низ</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Элементы
+    const skeleton = document.querySelector('.skeleton');
+    const legs = document.getElementById('legs');
+    const head = document.querySelector('.head');
+    const armLeft = document.querySelector('.arm.left');
+    const armRight = document.querySelector('.arm.right');
+    const activeScenarioLabel = document.getElementById('active-scenario');
+
+    // Выбираем все машины, включая уникальные
+    const carsHorizontal = document.querySelectorAll('.car-horizontal');
+    const carsVertical = document.querySelectorAll('.car-vertical');
+
+    const pedestriansH = document.querySelectorAll('.pedestrian-horizontal');
+    const pedestriansV = document.querySelectorAll('.pedestrian-vertical');
+
+    const allAnimatedElements = [...carsHorizontal, ...carsVertical, ...pedestriansH, ...pedestriansV];
+
+    const buttons = document.querySelectorAll('#scenarios-controls button');
+
+    // --- БЛОК БЕСКОНЕЧНОЙ АНИМАЦИИ СКЕЛЕТА ---
+    const legFrames = ['media/nogi1.png', 'media/nogi2.png', 'media/nogi3.png'];
+    let legFrame = 0;
+    let legTimer = 0;
+
+    function animateLegs(delta) {
+        legTimer += delta;
+        if (legTimer > 0.3) {
+            legFrame = (legFrame + 1) % legFrames.length;
+            legs.src = legFrames[legFrame];
+            legTimer = 0;
+        }
+    }
+
+    // НОВАЯ ФУНКЦИЯ: Постоянное качание скелета
+    function animateSway(time) {
+        const rotation = Math.sin(time * 0.0025) * 10;
+        const headSway = Math.sin(time * 0.005) * 2;
+        const armSway = Math.sin(time * 0.003) * 15;
+
+        skeleton.style.transform = `scale(0.12) rotateZ(${rotation}deg)`;
+        head.style.transform = `rotateZ(${headSway}deg)`;
+        armLeft.style.transform = `rotateZ(${armSway}deg)`;
+        armRight.style.transform = `rotateZ(${-armSway}deg)`;
+    }
+
+
+    let lastTime = 0;
+    function animate(time) {
+        const delta = (time - lastTime) / 1000 || 0;
+        lastTime = time;
+        animateLegs(delta);
+        animateSway(time);
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+    // --- КОНЕЦ БЛОКА БЕСКОНЕЧНОЙ АНИМАЦИИ СКЕЛЕТА ---
+
+    // Функция жесткого перезапуска анимаций
+    function hardResetAnimations() {
+        allAnimatedElements.forEach(el => {
+            const animation = getComputedStyle(el).animation;
+            el.style.animation = 'none';
+            void el.offsetWidth; // Force reflow
+            el.style.animation = animation;
+        });
+    }
+
+    // Сценарии управления трафиком
+    const scenarios = {
+        1: {
+            name: 'Руки в стороны или опущены',
+            horizontalCars: 'go',
+            verticalCars: 'stop',
+            pedestriansH: 'go',
+            pedestriansV: 'stop'
+        },
+        2: {
+            name: 'Правая рука вытянута вперед',
+            horizontalCars: 'go',
+            verticalCars: 'stop',
+            pedestriansH: 'stop',
+            pedestriansV: 'go'
+        },
+        3: {
+            name: 'Рука поднята вверх',
+            horizontalCars: 'stop',
+            verticalCars: 'stop',
+            pedestriansH: 'stop',
+            pedestriansV: 'stop'
+        },
+        4: {
+            name: 'Свободный режим',
+            horizontalCars: 'stop',
+            verticalCars: 'go',
+            pedestriansH: 'stop',
+            pedestriansV: 'go'
+        }
+    };
+
+    function applyScenario(gestureNumber) {
+        // Сбросить активные кнопки
+        buttons.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-gesture="${gestureNumber}"]`).classList.add('active');
+
+        // Обновить индикатор
+        activeScenarioLabel.textContent = `Сценарий: ${scenarios[gestureNumber].name}`;
+
+        // Жесткий перезапуск всех анимаций
+        hardResetAnimations();
+
+        // Применить правила движения через небольшую задержку
+        setTimeout(() => {
+            const scenario = scenarios[gestureNumber];
+
+            // Горизонтальные машины
+            carsHorizontal.forEach(car => {
+                if (scenario.horizontalCars === 'go') {
+                    car.classList.remove('paused');
+                    car.style.animationPlayState = 'running';
+                } else {
+                    car.classList.add('paused');
+                    car.style.animationPlayState = 'paused';
+                }
+            });
+
+            // Вертикальные машины
+            carsVertical.forEach(car => {
+                if (scenario.verticalCars === 'go') {
+                    car.classList.remove('paused');
+                    car.style.animationPlayState = 'running';
+                } else {
+                    car.classList.add('paused');
+                    car.style.animationPlayState = 'paused';
+                }
+            });
+
+            // Пешеходы горизонтальные
+            pedestriansH.forEach(p => {
+                if (scenario.pedestriansH === 'go') {
+                    p.classList.remove('paused');
+                    p.style.animationPlayState = 'running';
+                } else {
+                    p.classList.add('paused');
+                    p.style.animationPlayState = 'paused';
+                }
+            });
+
+            // Пешеходы вертикальные
+            pedestriansV.forEach(p => {
+                if (scenario.pedestriansV === 'go') {
+                    p.classList.remove('paused');
+                    p.style.animationPlayState = 'running';
+                } else {
+                    p.classList.add('paused');
+                    p.style.animationPlayState = 'paused';
+                }
+            });
+        }, 50);
+    }
+
+    // Привязка кнопок
+    document.getElementById('btn-gesture-1').addEventListener('click', () => applyScenario(1));
+    document.getElementById('btn-gesture-2').addEventListener('click', () => applyScenario(2));
+    document.getElementById('btn-gesture-3').addEventListener('click', () => applyScenario(3));
+    document.getElementById('btn-gesture-4').addEventListener('click', () => applyScenario(4));
+
+    // Запуск первого сценария по умолчанию
+    applyScenario(1);
+</script>
+</body>
+</html>

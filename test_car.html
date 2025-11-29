@@ -24,7 +24,7 @@
         @keyframes drive-away { from { transform: translate(23vw,85vh) scale(1.2); } to { transform: translate(43vw,1vh) scale(0.12); } }
 
         /* Скелет */
-        .skeleton { position:absolute; transform-origin:top center; transform-style:preserve-3d; animation:fall-closer 20s linear infinite; z-index:1; }
+        .skeleton { position:absolute; transform-origin:top center; transform-style:preserve-3d; animation:fall-closer 80s linear infinite; z-index:1; }
         @keyframes fall-closer { from { transform: translate(43vw,-20vh) scale(0.01); } to { transform: translate(90vw,110vh) scale(0.1); } }
         .head { position:absolute; top:100px; left:270px; width:327px; height:496px; background:url('media/golova.png') no-repeat center/contain; z-index:10; }
         .torso { position:absolute; top:400px; left:60px; width:737px; height:837px; background:url('media/telo.png') no-repeat center/contain; transform-origin:top center; z-index:5; }
@@ -47,7 +47,7 @@
         #scenarios-controls { position:absolute; right:14px; top:14px; z-index:9999; display:flex; gap:8px; background:rgba(0,0,0,0.45); padding:8px; border-radius:6px; pointer-events:auto; }
         #scenarios-controls button { background:#fff1; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:8px 10px; border-radius:4px; cursor:pointer; font-weight:600; }
         #scenarios-controls button:active { transform:translateY(1px); }
-        .paused { animation-play-state:paused !important; }
+        #paused { animation-play-state:paused !important; }
     </style>
 </head>
 <body>
@@ -118,79 +118,47 @@
     }
     requestAnimationFrame(animateSkeleton);
 
-    const cars=[document.getElementById('car1'),document.getElementById
-    const cars = [
-        document.getElementById('car1'),
-        document.getElementById('car2'),
-        document.getElementById('car3')
+    const cars=[document.getElementById('car1'),document.getElementById('car2'),document.getElementById('car3')];
+    cars.forEach(c=>c._origAnimation=getComputedStyle(c).animation||'');
+
+    function restartCSSAnimation(el){
+        if(!el)return;
+        el.style.animation='none';
+        void el.offsetWidth;
+        el.style.animation=el._origAnimation||'';
+        el.style.animationPlayState='running';
+    }
+
+    function restartAll(){
+        cars.forEach(c=>{ if(c)restartCSSAnimation(c); });
+        legFrame=0; step=0; armTime=0; lastTime=0;
+        if(legs)legs.src=legFrames[0];
+    }
+
+    const scenarios=[
+        {states:{car1:'go',car2:'stop',car3:'stop'}},
+        {states:{car1:'stop',car2:'go',car3:'stop'}},
+        {states:{car1:'stop',car2:'stop',car3:'go'}},
+        {states:{car1:'go',car2:'go',car3:'stop'}}
     ];
 
-    // сохранение исходных стилей (для перезапуска)
-    const initialStyles = cars.map(car => car.getAttribute('style') || "");
-
-    // Останавливает ВСЕ CSS-анимации
-    function pauseAllAnimations() {
-        cars.forEach(car => car.classList.add('paused'));
-        document.querySelector('.skeleton').classList.add('paused');
+    function applyScenario(i){
+        restartAll();
+        setTimeout(()=>{
+            const mapping=[{id:'car1',el:document.getElementById('car1')},{id:'car2',el:document.getElementById('car2')},{id:'car3',el:document.getElementById('car3')}];
+            mapping.forEach(m=>{
+                const desired=scenarios[i].states[m.id];
+                if(!m.el)return;
+                if(desired==='go'){ m.el.style.animationPlayState='running'; m.el.classList.remove('paused'); }
+                else{ m.el.style.animationPlayState='paused'; m.el.classList.add('paused'); }
+            });
+        },30);
     }
 
-    // Возвращает анимации обратно
-    function resumeAllAnimations() {
-        cars.forEach(car => car.classList.remove('paused'));
-        document.querySelector('.skeleton').classList.remove('paused');
-    }
-
-    // Полный сброс позиций машин + скелета
-    function resetScene() {
-        cars.forEach((car, i) => {
-            car.style.cssText = initialStyles[i]; // восстановление
-            car.classList.remove('paused');
-            void car.offsetWidth; // сброс стилей для перезапуска
-        });
-
-        const skeleton = document.querySelector('.skeleton');
-        skeleton.classList.remove('paused');
-        skeleton.style.animation = 'none';
-        skeleton.offsetHeight;
-        skeleton.style.animation = '';
-    }
-
-    // ---------------------------
-    // ЖЕСТЫ РЕГУЛИРОВЩИКА (СЦЕНЫ)
-    // ---------------------------
-
-    function gesture1() {
-        resetScene();
-
-        // пример: левая рука поднята, правая опущена
-        document.querySelector('.upper-arm.left').style.transform = 'rotate(-60deg)';
-        document.querySelector('.upper-arm.right').style.transform = 'rotate(10deg)';
-    }
-
-    function gesture2() {
-        resetScene();
-        document.querySelector('.upper-arm.left').style.transform = 'rotate(0deg)';
-        document.querySelector('.upper-arm.right').style.transform = 'rotate(90deg)';
-    }
-
-    function gesture3() {
-        resetScene();
-        document.querySelector('.upper-arm.left').style.transform = 'rotate(-90deg)';
-        document.querySelector('.upper-arm.right').style.transform = 'rotate(-90deg)';
-    }
-
-    function gesture4() {
-        resetScene();
-        document.querySelector('.upper-arm.left').style.transform = 'rotate(40deg)';
-        document.querySelector('.upper-arm.right').style.transform = 'rotate(-40deg)';
-    }
-
-    // подключение кнопок
-    document.getElementById('btn-gesture-1').onclick = gesture1;
-    document.getElementById('btn-gesture-2').onclick = gesture2;
-    document.getElementById('btn-gesture-3').onclick = gesture3;
-    document.getElementById('btn-gesture-4').onclick = gesture4;
-
+    document.getElementById('btn-gesture-1').addEventListener('click',()=>applyScenario(0));
+    document.getElementById('btn-gesture-2').addEventListener('click',()=>applyScenario(1));
+    document.getElementById('btn-gesture-3').addEventListener('click',()=>applyScenario(2));
+    document.getElementById('btn-gesture-4').addEventListener('click',()=>applyScenario(3));
 </script>
 </body>
 </html>

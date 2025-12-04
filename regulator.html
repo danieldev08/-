@@ -10,7 +10,7 @@
     :root {
         --car-speed-horizontal: 18s;
         --car-speed-vertical: 14s;
-        --pedestrian-speed: 12s;
+        --pedestrian-speed: 20s;
         --skeleton-transition: 0.8s;
     }
 
@@ -146,24 +146,41 @@
     /* === ПЕШЕХОДЫ === */
     .pedestrian {
         position: absolute;
-        width: 40px;
+        width: 40px;   /* меньше машин */
         height: 60px;
         z-index: 15;
+        transform-origin: center bottom;
+    }
+    .skeleton {
+        z-index: 100;
+        transform-style: preserve-3d;
+        position: absolute; /* чтобы translateZ работало */
     }
 
+
+    /* Горизонтальные пешеходы */
     .pedestrian-horizontal {
         animation: walk-horizontal var(--pedestrian-speed) linear infinite;
-        top: 48%;
+        top: 32%;
     }
 
+    /* Вертикальные пешеходы (перспектива как машины) */
     .pedestrian-vertical {
         animation: walk-vertical var(--pedestrian-speed) linear infinite;
-        left: 49%;
+        left: 9%;
     }
 
-    .pedestrian.paused {
-        animation-play-state: paused !important;
+    /* === Лёгкое покачивание головы === */
+    .skeleton .head {
+        transform-origin: center center;
     }
+
+    /* === Руки с пульсацией === */
+    .skeleton .arm.left,
+    .skeleton .arm.right {
+        transform-origin: center top;
+    }
+
 
     /* Пешеход (визуальные стили) */
     .pedestrian::before {
@@ -188,32 +205,58 @@
         border-radius: 5px;
     }
 
+    /* Горизонтальная траектория (по ширине экрана) */
     @keyframes walk-horizontal {
-        from { left: -60px; }
-        to { left: calc(100vw + 60px); }
+        from { transform: translateX(-60px) scale(0.05); }
+        to { transform: translateX(calc(90vw + 60px)) scale(0.07); }
     }
 
+    /* Вертикальная траектория (как машины, с перспективой) */
     @keyframes walk-vertical {
-        from { top: -80px; }
-        to { top: calc(100vh + 80px); }
+        from { transform: translate(45vw, -10vh) scale(0.05); }  /* сверху */
+        to { transform: translate(45vw, 100vh) scale(0.12); }   /* вниз */
     }
 
-    /* === СКЕЛЕТ-РЕГУЛИРОВЩИК (ПОЗИЦИОНИРОВАНИЕ И НАСТРОЙКИ ДЛЯ КАЧАНИЯ) === */
-    .skeleton {
-        position: absolute;
-        top: 42vh;
-        left: 43vw;
-        transform: scale(0.12);
-        transform-origin: center center;
-        transform-style: preserve-3d;
-        z-index: 15;
-        transition: none;
+
+
+    /* Мелкие уникальные траектории (по желанию можно дублировать и варьировать) */
+    .pedestrian-vertical-unique {
+        animation: walk-vertical-unique var(--pedestrian-speed) linear infinite;
     }
 
-    .head { transition: none; }
-    .arm { transition: none; }
-    .upper-arm, .forearm, .hand { transition: none !important; }
-    .upper-arm, .forearm, .hand { transform: rotate(0deg) !important; }
+    @keyframes walk-vertical-unique {
+        0% { transform: translate(40vw, -10vh) scale(0.05); }  /* старт сверху */
+        30% { transform: translate(42vw, 25vh) scale(0.06); }
+        60% { transform: translate(46vw, 60vh) scale(0.08); }
+        100% { transform: translate(50vw, 105vh) scale(0.12); } /* конец снизу */
+    }
+
+
+    /* Уникальная вертикальная траектория */
+    .pedestrian-vertical-unique {
+        animation: walk-vertical-unique var(--pedestrian-speed) linear infinite;
+    }
+
+    @keyframes walk-vertical-unique {
+        0% { transform: translate(40vw, 100vh) scale(0.05); }
+        30% { transform: translate(42vw, 70vh) scale(0.06); }
+        60% { transform: translate(46vw, 40vh) scale(0.08); }
+        100% { transform: translate(50vw, -5vh) scale(0.12); }
+    }
+
+    /* Уникальная горизонтальная траектория */
+    .pedestrian-horizontal-unique {
+        animation: walk-horizontal-unique var(--pedestrian-speed) linear infinite;
+    }
+
+    @keyframes walk-horizontal-unique {
+        0% { transform: translateX(-60px) translateY(30vh) scale(0.05); }
+        30% { transform: translateX(30vw) translateY(32vh) scale(0.06); }
+        60% { transform: translateX(60vw) translateY(34vh) scale(0.07); }
+        100% { transform: translateX(calc(100vw + 60px)) translateY(36vh) scale(0.07); }
+    }
+
+
 
     /* ВТОРИЧНЫЕ СТИЛИ СКЕЛЕТА */
     .head {
@@ -446,10 +489,8 @@
         <img src="media/car_yogurt_3.png" alt="Car">
     </div>
 
-    <div class="pedestrian pedestrian-horizontal" style="animation-delay: 2s;"></div>
-    <div class="pedestrian pedestrian-vertical" style="animation-delay: 6s;"></div>
-
-    <div class="skeleton">
+    <!-- 5 СКЕЛЕТОВ вместо пешеходов -->
+    <div class="skeleton pedestrian-horizontal" style="animation-delay: 0s;">
         <div class="head"></div>
         <div class="torso"></div>
         <div class="arm left">
@@ -467,9 +508,125 @@
             </div>
         </div>
         <div class="legs-container">
-            <img id="legs" src="media/nogi1.png" alt="Legs">
+            <img src="media/nogi1.png" alt="Legs">
         </div>
     </div>
+
+    <div class="skeleton pedestrian-horizontal" style="animation-delay: 3s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left">
+            <div class="upper-arm left">
+                <div class="forearm left">
+                    <div class="hand left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm right">
+                <div class="forearm right">
+                    <div class="hand right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="legs-container">
+            <img src="media/nogi1.png" alt="Legs">
+        </div>
+    </div>
+
+    <div class="skeleton pedestrian-horizontal" style="animation-delay: 6s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left">
+            <div class="upper-arm left">
+                <div class="forearm left">
+                    <div class="hand left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm right">
+                <div class="forearm right">
+                    <div class="hand right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="legs-container">
+            <img src="media/nogi1.png" alt="Legs">
+        </div>
+    </div>
+
+    <div class="skeleton pedestrian-vertical" style="animation-delay: 1s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left">
+            <div class="upper-arm left">
+                <div class="forearm left">
+                    <div class="hand left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm right">
+                <div class="forearm right">
+                    <div class="hand right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="legs-container">
+            <img src="media/nogi1.png" alt="Legs">
+        </div>
+    </div>
+
+    <div class="skeleton pedestrian-vertical" style="animation-delay: 4s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left">
+            <div class="upper-arm left">
+                <div class="forearm left">
+                    <div class="hand left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm right">
+                <div class="forearm right">
+                    <div class="hand right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="legs-container">
+            <img src="media/nogi1.png" alt="Legs">
+        </div>
+    </div>
+
+    <!-- Уникальные вертикальные пешеходы -->
+    <div class="skeleton pedestrian-vertical-unique" style="animation-delay: 2s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left"><div class="upper-arm left"><div class="forearm left"><div class="hand left"></div></div></div></div>
+        <div class="arm right"><div class="upper-arm right"><div class="forearm right"><div class="hand right"></div></div></div></div>
+        <div class="legs-container"><img src="media/nogi1.png" alt="Legs"></div>
+    </div>
+
+    <div class="skeleton pedestrian-vertical-unique" style="animation-delay: 5s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left"><div class="upper-arm left"><div class="forearm left"><div class="hand left"></div></div></div></div>
+        <div class="arm right"><div class="upper-arm right"><div class="forearm right"><div class="hand right"></div></div></div></div>
+        <div class="legs-container"><img src="media/nogi1.png" alt="Legs"></div>
+    </div>
+
+    <!-- Уникальные горизонтальные пешеходы -->
+    <div class="skeleton pedestrian-horizontal-unique" style="animation-delay: 1s;">
+        <div class="head"></div>
+        <div class="torso"></div>
+        <div class="arm left"><div class="upper-arm left"><div class="forearm left"><div class="hand left"></div></div></div></div>
+        <div class="arm right"><div class="upper-arm right"><div class="forearm right"><div class="hand right"></div></div></div></div>
+        <div class="legs-container"><img src="media/nogi1.png" alt="Legs"></div>
+    </div>
+
+
 
     <div id="scenarios-controls">
         <button id="btn-gesture-1" data-gesture="1">
@@ -492,174 +649,153 @@
 </div>
 
 <script>
-    // Элементы
-    const skeleton = document.querySelector('.skeleton');
-    const legs = document.getElementById('legs');
-    const head = document.querySelector('.head');
-    const armLeft = document.querySelector('.arm.left');
-    const armRight = document.querySelector('.arm.right');
-    const activeScenarioLabel = document.getElementById('active-scenario');
-
-    // Выбираем все машины, включая уникальные
-    const carsHorizontal = document.querySelectorAll('.car-horizontal');
-    const carsVertical = document.querySelectorAll('.car-vertical');
-
-    const pedestriansH = document.querySelectorAll('.pedestrian-horizontal');
-    const pedestriansV = document.querySelectorAll('.pedestrian-vertical');
-
-    const allAnimatedElements = [...carsHorizontal, ...carsVertical, ...pedestriansH, ...pedestriansV];
-
-    const buttons = document.querySelectorAll('#scenarios-controls button');
-
-    // --- БЛОК БЕСКОНЕЧНОЙ АНИМАЦИИ СКЕЛЕТА ---
+    // === ЭЛЕМЕНТЫ ===
     const legFrames = ['media/nogi1.png', 'media/nogi2.png', 'media/nogi3.png'];
     let legFrame = 0;
     let legTimer = 0;
 
+    const carsHorizontal = document.querySelectorAll('.car-horizontal');
+    const carsVertical = document.querySelectorAll('.car-vertical');
+    const pedestriansH = document.querySelectorAll('.pedestrian-horizontal');
+    const pedestriansV = document.querySelectorAll('.pedestrian-vertical');
+    const allAnimatedElements = [...carsHorizontal, ...carsVertical, ...pedestriansH, ...pedestriansV];
+    const skeletons = document.querySelectorAll('.skeleton');
+    const buttons = document.querySelectorAll('#scenarios-controls button');
+    const activeScenarioLabel = document.getElementById('active-scenario');
+
+    // === ИНИЦИАЛИЗАЦИЯ ПЕШЕХОДОВ ===
+    const pedestriansUniqueH = document.querySelectorAll('.pedestrian-horizontal-unique');
+    const pedestriansUniqueV = document.querySelectorAll('.pedestrian-vertical-unique');
+    const pedestrians = [...pedestriansH, ...pedestriansV, ...pedestriansUniqueH, ...pedestriansUniqueV];
+    pedestrians.forEach(ped => {
+        ped.dataset.left = ped.style.left ? parseFloat(ped.style.left) : Math.random() * 90;
+        ped.dataset.top = ped.style.top ? parseFloat(ped.style.top) : 100 + Math.random() * 50;
+        ped.dataset.speed = Math.random() * 0.03 + 0.02; // скорость движения
+    });
+
+    // === ФУНКЦИИ АНИМАЦИИ СКЕЛЕТОВ ===
     function animateLegs(delta) {
         legTimer += delta;
         if (legTimer > 0.3) {
-            legFrame = (legFrame + 1) % legFrames.length;
-            legs.src = legFrames[legFrame];
+            skeletons.forEach(sk => {
+                const legsImg = sk.querySelector('.legs-container img');
+                legFrame = (legFrame + 1) % legFrames.length;
+                legsImg.src = legFrames[legFrame];
+            });
             legTimer = 0;
         }
     }
 
-    // НОВАЯ ФУНКЦИЯ: Постоянное качание скелета
-    function animateSway(time) {
-        const rotation = Math.sin(time * 0.0025) * 10;
-        const headSway = Math.sin(time * 0.005) * 2;
-        const armSway = Math.sin(time * 0.003) * 15;
+    function animatePedestrianPulse(time) {
+        pedestrians.forEach(ped => {
+            const armL = ped.querySelector('.arm.left');
+            const armR = ped.querySelector('.arm.right');
+            const scale = 1 + Math.sin(time * 0.005) * 0.02; // лёгкая пульсация рук
+            if (armL) armL.style.transform = `scaleY(${scale})`;
+            if (armR) armR.style.transform = `scaleY(${scale})`;
 
-        skeleton.style.transform = `scale(0.12) rotateZ(${rotation}deg)`;
-        head.style.transform = `rotateZ(${headSway}deg)`;
-        armLeft.style.transform = `rotateZ(${armSway}deg)`;
-        armRight.style.transform = `rotateZ(${-armSway}deg)`;
+            // движение и перспектива
+            let top = parseFloat(ped.dataset.top);
+            top -= ped.dataset.speed;
+            if (top < -110) top = 110; // возвращение снизу
+            ped.dataset.top = top;
+
+            const scalePed = 0.07 + (1 - top/100) * 0.05; // масштаб меньше машин
+            ped.style.transform = `translateX(${ped.dataset.left}vw) translateY(${top}vh) scale(${scalePed})`;
+        });
     }
 
+    // === ОСНОВНАЯ АНИМАЦИЯ ===
 
-    let lastTime = 0;
-    function animate(time) {
-        const delta = (time - lastTime) / 1000 || 0;
-        lastTime = time;
-        animateLegs(delta);
-        animateSway(time);
-        requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-    // --- КОНЕЦ БЛОКА БЕСКОНЕЧНОЙ АНИМАЦИИ СКЕЛЕТА ---
 
-    // Функция жесткого перезапуска анимаций
+    // === ПЕРЕЗАПУСК АНИМАЦИЙ ===
     function hardResetAnimations() {
         allAnimatedElements.forEach(el => {
             const animation = getComputedStyle(el).animation;
             el.style.animation = 'none';
-            void el.offsetWidth; // Force reflow
+            void el.offsetWidth;
             el.style.animation = animation;
         });
     }
 
-    // Сценарии управления трафиком
+    // === СЦЕНАРИИ ===
     const scenarios = {
-        1: {
-            name: 'Руки в стороны или опущены',
-            horizontalCars: 'go',
-            verticalCars: 'stop',
-            pedestriansH: 'go',
-            pedestriansV: 'stop'
-        },
-        2: {
-            name: 'Правая рука вытянута вперед',
-            horizontalCars: 'go',
-            verticalCars: 'stop',
-            pedestriansH: 'stop',
-            pedestriansV: 'go'
-        },
-        3: {
-            name: 'Рука поднята вверх',
-            horizontalCars: 'stop',
-            verticalCars: 'stop',
-            pedestriansH: 'stop',
-            pedestriansV: 'stop'
-        },
-        4: {
-            name: 'Свободный режим',
-            horizontalCars: 'stop',
-            verticalCars: 'go',
-            pedestriansH: 'stop',
-            pedestriansV: 'go'
-        }
+        1: {name:'Руки в стороны', horizontalCars:'go', verticalCars:'stop', pedestriansH:'go', pedestriansV:'stop'},
+        2: {name:'Правая рука вперед', horizontalCars:'go', verticalCars:'stop', pedestriansH:'stop', pedestriansV:'go'},
+        3: {name:'Рука вверх', horizontalCars:'stop', verticalCars:'stop', pedestriansH:'stop', pedestriansV:'stop'},
+        4: {name:'Свободный режим', horizontalCars:'stop', verticalCars:'go', pedestriansH:'stop', pedestriansV:'go'}
     };
 
-    function applyScenario(gestureNumber) {
-        // Сбросить активные кнопки
+    // === ПРИМЕНЕНИЕ СЦЕНАРИЯ ===
+    function applyScenario(n) {
         buttons.forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[data-gesture="${gestureNumber}"]`).classList.add('active');
-
-        // Обновить индикатор
-        activeScenarioLabel.textContent = `Сценарий: ${scenarios[gestureNumber].name}`;
-
-        // Жесткий перезапуск всех анимаций
+        document.querySelector(`[data-gesture="${n}"]`)?.classList.add('active');
+        activeScenarioLabel.textContent = `Сценарий: ${scenarios[n].name}`;
         hardResetAnimations();
 
-        // Применить правила движения через небольшую задержку
         setTimeout(() => {
-            const scenario = scenarios[gestureNumber];
-
             // Горизонтальные машины
             carsHorizontal.forEach(car => {
-                if (scenario.horizontalCars === 'go') {
-                    car.classList.remove('paused');
-                    car.style.animationPlayState = 'running';
-                } else {
-                    car.classList.add('paused');
-                    car.style.animationPlayState = 'paused';
-                }
+                if (scenarios[n].horizontalCars === 'go') { car.classList.remove('paused'); car.style.animationPlayState='running'; }
+                else { car.classList.add('paused'); car.style.animationPlayState='paused'; }
             });
 
             // Вертикальные машины
             carsVertical.forEach(car => {
-                if (scenario.verticalCars === 'go') {
-                    car.classList.remove('paused');
-                    car.style.animationPlayState = 'running';
-                } else {
-                    car.classList.add('paused');
-                    car.style.animationPlayState = 'paused';
-                }
+                if (scenarios[n].verticalCars === 'go') { car.classList.remove('paused'); car.style.animationPlayState='running'; }
+                else { car.classList.add('paused'); car.style.animationPlayState='paused'; }
             });
 
-            // Пешеходы горизонтальные
-            pedestriansH.forEach(p => {
-                if (scenario.pedestriansH === 'go') {
-                    p.classList.remove('paused');
-                    p.style.animationPlayState = 'running';
+            // Пешеходы
+            pedestrians.forEach(ped => {
+                if ((ped.classList.contains('pedestrian-horizontal') && scenarios[n].pedestriansH === 'go') ||
+                    (ped.classList.contains('pedestrian-vertical') && scenarios[n].pedestriansV === 'go')) {
+                    ped.classList.remove('paused'); ped.style.animationPlayState='running';
                 } else {
-                    p.classList.add('paused');
-                    p.style.animationPlayState = 'paused';
-                }
-            });
-
-            // Пешеходы вертикальные
-            pedestriansV.forEach(p => {
-                if (scenario.pedestriansV === 'go') {
-                    p.classList.remove('paused');
-                    p.style.animationPlayState = 'running';
-                } else {
-                    p.classList.add('paused');
-                    p.style.animationPlayState = 'paused';
+                    ped.classList.add('paused'); ped.style.animationPlayState='paused';
                 }
             });
         }, 50);
     }
 
-    // Привязка кнопок
-    document.getElementById('btn-gesture-1').addEventListener('click', () => applyScenario(1));
-    document.getElementById('btn-gesture-2').addEventListener('click', () => applyScenario(2));
-    document.getElementById('btn-gesture-3').addEventListener('click', () => applyScenario(3));
-    document.getElementById('btn-gesture-4').addEventListener('click', () => applyScenario(4));
+    // === АНИМАЦИЯ СКЕЛЕТА ===
+    let lastTime = 0;
+    function animate(time) {
+        const delta = (time - lastTime) / 1000 || 0;
+        lastTime = time;
 
-    // Запуск первого сценария по умолчанию
+
+        // Анимация ног и пешеходов
+        animateLegs(delta);
+        animatePedestrianPulse(time);
+
+        // Анимация головы и рук (голова покачивается, руки вглубь)
+        skeletons.forEach(sk => {
+            const head = sk.querySelector('.head');
+            const armL = sk.querySelector('.arm.left');
+            const armR = sk.querySelector('.arm.right');
+
+            // Голова покачивается
+            if(head) head.style.transform = `scale(${Math.sin(time * 0.003) * 5}deg)`;
+
+            // Руки двигаются вглубь (translateZ)
+
+        });
+
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+
+
+
+    // === ПРИВЯЗКА КНОПОК ===
+    buttons.forEach(btn => btn.addEventListener('click', () => applyScenario(btn.dataset.gesture)));
+
+    // === ЗАПУСК ПО УМОЛЧАНИЮ ===
     applyScenario(1);
 </script>
+
+
 </body>
 </html>

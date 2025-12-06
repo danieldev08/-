@@ -653,24 +653,39 @@
     const pedestriansV = document.querySelectorAll('.pedestrian-vertical');
     const pedestriansUniqueH = document.querySelectorAll('.pedestrian-horizontal-unique');
     const pedestriansUniqueV = document.querySelectorAll('.pedestrian-vertical-unique');
+
     const allAnimatedElements = [...carsHorizontal, ...carsVertical, ...pedestriansH, ...pedestriansV, ...pedestriansUniqueH, ...pedestriansUniqueV];
     const skeletons = document.querySelectorAll('.skeleton');
     const buttons = document.querySelectorAll('#scenarios-controls button');
     const activeScenarioLabel = document.getElementById('active-scenario');
 
-    // === ИНИЦИАЛИЗАЦИЯ ПЕШЕХОДОВ (только горизонтальные) ===
-    const pedestrians = [...pedestriansH, ...pedestriansUniqueH]; // вертикальные управляются CSS
+    // === ИНИЦИАЛИЗАЦИЯ ГОРИЗОНТАЛЬНЫХ ПЕШЕХОДОВ ===
+    const pedestrians = [...pedestriansH, ...pedestriansUniqueH];
     pedestrians.forEach(ped => {
         ped.dataset.left = ped.style.left ? parseFloat(ped.style.left) : Math.random() * 90;
         ped.dataset.top = ped.style.top ? parseFloat(ped.style.top) : 100 + Math.random() * 50;
-        ped.dataset.speed = Math.random() * 0.03 + 0.02; // скорость движения
+        ped.dataset.speed = Math.random() * 0.03 + 0.02;
     });
 
-    // === ИНИЦИАЛИЗАЦИЯ уникальных вертикальных пешеходов ===
-    pedestriansUniqueV.forEach(pedV => {
-        pedV.style.transform = 'translate(53vw, -5vh) scale(0.005)'; // стартовая позиция и размер
-        pedV.style.opacity = 0; // скрыт до начала сценария
-        pedV.classList.add('paused'); // останавливаем анимацию
+    // === ИНИЦИАЛИЗАЦИЯ ВЕРТИКАЛЬНЫХ ПЕШЕХОДОВ ===
+    [...pedestriansV, ...pedestriansUniqueV].forEach(pedV => {
+        pedV.style.transform = 'translate(53vw, -5vh) scale(0.05)';
+        pedV.style.opacity = 0;
+        pedV.classList.add('paused');
+    });
+
+    // === ИНИЦИАЛИЗАЦИЯ ГОРИЗОНТАЛЬНЫХ МАШИН ===
+    carsHorizontal.forEach(car => {
+        car.style.transform = 'translateX(-10vw) scale(0.05)'; // старт слева
+        car.style.opacity = 0;
+        car.classList.add('paused');
+    });
+
+    // === ИНИЦИАЛИЗАЦИЯ ВЕРТИКАЛЬНЫХ МАШИН ===
+    carsVertical.forEach(car => {
+        car.style.transform = 'translateY(-10vh) scale(0.05)'; // старт сверху
+        car.style.opacity = 0;
+        car.classList.add('paused');
     });
 
     // === ФУНКЦИИ АНИМАЦИИ СКЕЛЕТОВ ===
@@ -690,17 +705,16 @@
         pedestrians.forEach(ped => {
             const armL = ped.querySelector('.arm.left');
             const armR = ped.querySelector('.arm.right');
-            const scale = 1 + Math.sin(time * 0.005) * 0.02; // лёгкая пульсация рук
+            const scale = 1 + Math.sin(time * 0.005) * 0.02;
             if (armL) armL.style.transform = `scaleY(${scale})`;
             if (armR) armR.style.transform = `scaleY(${scale})`;
 
-            // движение и перспектива (только горизонтальные)
             let top = parseFloat(ped.dataset.top);
             top -= ped.dataset.speed;
-            if (top < -110) top = 110; // возвращение снизу
+            if (top < -110) top = 110;
             ped.dataset.top = top;
 
-            const scalePed = 0.07 + (1 - top/100) * 0.05;
+            const scalePed = 0.07 + (1 - top / 100) * 0.05;
             ped.style.transform = `translateX(${ped.dataset.left}vw) translateY(${top}vh) scale(${scalePed})`;
         });
     }
@@ -723,7 +737,7 @@
         4: {name:'Свободный режим', horizontalCars:'stop', verticalCars:'go', pedestriansH:'stop', pedestriansV:'go'}
     };
 
-    // === ПРИМЕНЕНИЕ СЦЕНАРИЯ (с отображением/скрытием элементов) ===
+    // === ПРИМЕНЕНИЕ СЦЕНАРИЯ ===
     function applyScenario(n) {
         buttons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`[data-gesture="${n}"]`)?.classList.add('active');
@@ -735,12 +749,15 @@
             carsHorizontal.forEach(car => {
                 if (scenarios[n].horizontalCars === 'go') {
                     car.classList.remove('paused');
-                    car.style.animationPlayState='running';
+                    car.style.animationPlayState = 'running';
                     car.style.display = 'block';
+                    car.style.opacity = 1;
+                    car.style.transform = 'translateX(-10vw) scale(0.05)';
                 } else {
                     car.classList.add('paused');
-                    car.style.animationPlayState='paused';
+                    car.style.animationPlayState = 'paused';
                     car.style.display = 'none';
+                    car.style.opacity = 0;
                 }
             });
 
@@ -748,12 +765,15 @@
             carsVertical.forEach(car => {
                 if (scenarios[n].verticalCars === 'go') {
                     car.classList.remove('paused');
-                    car.style.animationPlayState='running';
+                    car.style.animationPlayState = 'running';
                     car.style.display = 'block';
+                    car.style.opacity = 1;
+                    car.style.transform = 'translateY(-10vh) scale(0.05)';
                 } else {
                     car.classList.add('paused');
-                    car.style.animationPlayState='paused';
+                    car.style.animationPlayState = 'paused';
                     car.style.display = 'none';
+                    car.style.opacity = 0;
                 }
             });
 
@@ -762,11 +782,11 @@
                 if ((ped.classList.contains('pedestrian-horizontal') && scenarios[n].pedestriansH === 'go') ||
                     (ped.classList.contains('pedestrian-horizontal-unique') && scenarios[n].pedestriansH === 'go')) {
                     ped.classList.remove('paused');
-                    ped.style.animationPlayState='running';
+                    ped.style.animationPlayState = 'running';
                     ped.style.display = 'block';
                 } else {
                     ped.classList.add('paused');
-                    ped.style.animationPlayState='paused';
+                    ped.style.animationPlayState = 'paused';
                     ped.style.display = 'none';
                 }
             });
@@ -775,21 +795,15 @@
             [...pedestriansV, ...pedestriansUniqueV].forEach(pedV => {
                 if (scenarios[n].pedestriansV === 'go') {
                     pedV.classList.remove('paused');
-                    pedV.style.animationPlayState='running';
+                    pedV.style.animationPlayState = 'running';
                     pedV.style.display = 'block';
-                    // если уникальный вертикальный, выставляем стартовый transform маленьким
-                    if (pedV.classList.contains('pedestrian-vertical-unique')) {
-                        pedV.style.transform = 'translate(53vw, -5vh) scale(0.005)';
-                        pedV.style.opacity = 1;
-                    }
+                    pedV.style.opacity = 1;
+                    pedV.style.transform = 'translate(53vw, -5vh) scale(0.05)';
                 } else {
                     pedV.classList.add('paused');
-                    pedV.style.animationPlayState='paused';
+                    pedV.style.animationPlayState = 'paused';
                     pedV.style.display = 'none';
-                    if (pedV.classList.contains('pedestrian-vertical-unique')) {
-                        pedV.style.transform = 'translate(53vw, -5vh) scale(0.005)';
-                        pedV.style.opacity = 0;
-                    }
+                    pedV.style.opacity = 0;
                 }
             });
         }, 50);
@@ -806,7 +820,7 @@
 
         skeletons.forEach(sk => {
             const head = sk.querySelector('.head');
-            if(head) head.style.transform = `rotate(${Math.sin(time * 0.003) * 5}deg)`;
+            if (head) head.style.transform = `rotate(${Math.sin(time * 0.003) * 5}deg)`;
         });
 
         requestAnimationFrame(animate);
@@ -819,6 +833,7 @@
     // === ЗАПУСК ПО УМОЛЧАНИЮ ===
     applyScenario(1);
 </script>
+
 
 
 

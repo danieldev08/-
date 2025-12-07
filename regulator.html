@@ -205,6 +205,34 @@
         border-radius: 5px;
     }
 
+    /* Пешеходы с задним видом */
+    .pedestrian-vertical-reverse {
+        position: absolute;
+        width: 40px;
+        height: 60px;
+        z-index: 4; /* ниже обычных вертикальных и машин */
+        transform-origin: center bottom;
+        animation: walk-vertical-reverse var(--pedestrian-speed) linear infinite;
+        display: none; /* по умолчанию скрыты */
+    }
+
+    @keyframes walk-vertical-reverse {
+        0% { transform: translate(50vw, 100vh) scale(0.12); }   /* старт снизу */
+        100% { transform: translate(50vw, -10vh) scale(0.02); }  /* вверх */
+    }
+
+    .pedestrian-vertical-reverse-unique {
+        animation: walk-vertical-reverse-unique var(--pedestrian-speed) linear infinite;
+    }
+
+    @keyframes walk-vertical-reverse-unique {
+        0% { transform: translate(50vw, 100vh) scale(0.12); }
+        30% { transform: translate(45vw, 60vh) scale(0.08); }
+        60% { transform: translate(40vw, 30vh) scale(0.05); }
+        100% { transform: translate(35vw, -10vh) scale(0.02); }
+    }
+
+
     /* Горизонтальная траектория (по ширине экрана) */
     @keyframes walk-horizontal {
         from { transform: translateX(-60px) scale(0.05); }
@@ -620,6 +648,57 @@
     </div>
 
 
+    <!-- ЗАДНИЙ ВИД: обычные -->
+    <div class="skeleton2 pedestrian-vertical-reverse" style="animation-delay: 1s;">
+        <div class="head" style="background-image:url('media/paren_golova.png'); top: -10px;"></div>
+        <div class="torso" style="background-image:url('media/paren-spina.png');"></div>
+
+        <div class="arm left">
+            <div class="upper-arm right" style="background-image:url('media/paren_ruka-1.png'); transform: scaleX(-1);">
+                <div class="forearm right" style="background-image:url('media/paren_ruka-2.png'); transform: scaleX(-1);">
+                    <div class="hand right" style="background-image:url('media/paren_ruka-3.png'); transform: scaleX(-1);"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm left" style="background-image:url('media/paren_ruka-1.png');">
+                <div class="forearm left" style="background-image:url('media/paren_ruka-2.png');">
+                    <div class="hand left" style="background-image:url('media/paren_ruka-3.png');"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legs-container">
+            <img src="media/paren-nogi-3.png" alt="Legs">
+        </div>
+    </div>
+
+    <div class="skeleton2 pedestrian-vertical-reverse" style="animation-delay: 4s;">
+        <div class="head" style="background-image:url('media/paren_golova.png'); top: -10px;"></div>
+        <div class="torso" style="background-image:url('media/paren-spina.png');"></div>
+
+        <div class="arm left">
+            <div class="upper-arm right" style="background-image:url('media/paren_ruka-1.png'); transform: scaleX(-1);">
+                <div class="forearm right" style="background-image:url('media/paren_ruka-2.png'); transform: scaleX(-1);">
+                    <div class="hand right" style="background-image:url('media/paren_ruka-3.png'); transform: scaleX(-1);"></div>
+                </div>
+            </div>
+        </div>
+        <div class="arm right">
+            <div class="upper-arm left" style="background-image:url('media/paren_ruka-1.png');">
+                <div class="forearm left" style="background-image:url('media/paren_ruka-2.png');">
+                    <div class="hand left" style="background-image:url('media/paren_ruka-3.png');"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legs-container">
+            <img src="media/paren-nogi-3.png" alt="Legs">
+        </div>
+    </div>
+
+
+
 
     <div id="scenarios-controls">
         <button id="btn-gesture-1" data-gesture="1">
@@ -653,8 +732,14 @@
     const pedestriansV = document.querySelectorAll('.pedestrian-vertical');
     const pedestriansUniqueH = document.querySelectorAll('.pedestrian-horizontal-unique');
     const pedestriansUniqueV = document.querySelectorAll('.pedestrian-vertical-unique');
+    const pedestriansReverse = document.querySelectorAll('.pedestrian-vertical-reverse');
 
-    const allAnimatedElements = [...carsHorizontal, ...carsVertical, ...pedestriansH, ...pedestriansV, ...pedestriansUniqueH, ...pedestriansUniqueV];
+    const allAnimatedElements = [
+        ...carsHorizontal, ...carsVertical,
+        ...pedestriansH, ...pedestriansV,
+        ...pedestriansUniqueH, ...pedestriansUniqueV,
+        ...pedestriansReverse
+    ];
     const skeletons = document.querySelectorAll('.skeleton');
     const buttons = document.querySelectorAll('#scenarios-controls button');
     const activeScenarioLabel = document.getElementById('active-scenario');
@@ -674,16 +759,21 @@
         pedV.classList.add('paused');
     });
 
-    // === ИНИЦИАЛИЗАЦИЯ ГОРИЗОНТАЛЬНЫХ МАШИН ===
+    // === ИНИЦИАЛИЗАЦИЯ ПЕШЕХОДОВ ЗАДНИМ ВИДОМ ===
+    pedestriansReverse.forEach(pedR => {
+        pedR.style.transform = 'translate(50vw, 100vh) scale(0.12)';
+        pedR.style.opacity = 0;
+        pedR.classList.add('paused');
+    });
+
+    // === ИНИЦИАЛИЗАЦИЯ МАШИН ===
     carsHorizontal.forEach(car => {
-        car.style.transform = 'translateX(-10vw) scale(0.05)'; // старт слева
+        car.style.transform = 'translateX(-10vw) scale(0.05)';
         car.style.opacity = 0;
         car.classList.add('paused');
     });
-
-    // === ИНИЦИАЛИЗАЦИЯ ВЕРТИКАЛЬНЫХ МАШИН ===
     carsVertical.forEach(car => {
-        car.style.transform = 'translateY(-10vh) scale(0.05)'; // старт сверху
+        car.style.transform = 'translateY(-10vh) scale(0.05)';
         car.style.opacity = 0;
         car.classList.add('paused');
     });
@@ -806,6 +896,23 @@
                     pedV.style.opacity = 0;
                 }
             });
+
+            // === Пешеходы задним видом ===
+            pedestriansReverse.forEach(pedR => {
+                if (scenarios[n].pedestriansV === 'go') {
+                    pedR.classList.remove('paused');
+                    pedR.style.animationPlayState = 'running';
+                    pedR.style.display = 'block';
+                    pedR.style.opacity = 1;
+                    pedR.style.transform = 'translate(50vw, 100vh) scale(0.12)';
+                } else {
+                    pedR.classList.add('paused');
+                    pedR.style.animationPlayState = 'paused';
+                    pedR.style.display = 'none';
+                    pedR.style.opacity = 0;
+                }
+            });
+
         }, 50);
     }
 
@@ -833,10 +940,5 @@
     // === ЗАПУСК ПО УМОЛЧАНИЮ ===
     applyScenario(1);
 </script>
-
-
-
-
-
 </body>
 </html>

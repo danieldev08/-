@@ -8,8 +8,8 @@
 <body>
 <style>
     :root {
-        --car-speed-horizontal: 18s;
-        --car-speed-vertical: 18s;
+        --car-speed-horizontal: 15s;
+        --car-speed-vertical: 15s;
         --pedestrian-speed: 30s;
         --skeleton-transition: 0.8s;
         --car-width-h: 160px;
@@ -27,11 +27,11 @@
     }
 
     #scene {
-        width: 100vw;
-        height: 100vh;
+        width: 110vw;
+        height: 110vh;
         position: relative;
         background: url('media/main.png') no-repeat center 60% / 75%;
-        perspective: 1200px;
+        perspective: 1500px;
     }
 
     /* Hint to browser about animations to reduce painting cost */
@@ -168,9 +168,12 @@
     }
 
     .pedestrian-vertical {
-        animation: walk-vertical var(--pedestrian-speed) linear infinite;
-        left: 9%;
+        position: absolute;
+        width: var(--pedestrian-w);
+        height: var(--pedestrian-h);
+        z-index: 6;
     }
+
 
     .skeleton .head, .skeleton2 .head { transform-origin: center center; }
     .skeleton .arm.left, .skeleton .arm.right,
@@ -372,8 +375,8 @@
     /* === КНОПКИ УПРАВЛЕНИЯ === */
     #scenarios-controls {
         position: absolute;
-        right: 20px;
-        bottom: 20px;
+        right: 1300px;
+        bottom: 60px;
         z-index: 9999;
         display: flex;
         flex-direction: column;
@@ -443,8 +446,8 @@
 
     .h-wrapper { position: relative; width: var(--car-width-h); }
     .h-wrapper .wheel { position: absolute; width: 18%; animation: rotate-wheel 0.5s linear infinite; }
-    .h-wrapper .front-wheel { bottom: 5%; right: 10%; }
-    .h-wrapper .back-wheel { bottom: 5%; left: 11%; }
+    .h-wrapper .front-wheel { bottom: -13%; right: 10%; }
+    .h-wrapper .back-wheel { bottom: -13%; left: 11%; }
 
     /* Путь 1: Слева до центра перекрестка */
     .path-L2C { top: 23%; animation: anim-L2C 5s linear forwards; }
@@ -452,19 +455,24 @@
         from { transform: translateX(-220px); }
         to { transform: translateX(calc(50vw - 80px)); }
     }
+    .path-C2D {
+        animation: anim-C2D 10s linear forwards;
+    }
+
+    @keyframes anim-C2D {
+        from {
+            transform: translate(15vw, 0vh) scale(0.2);
+        }
+        to {
+            transform: translate(-25vw, 150vh) scale(0.25);
+        }
+    }
 
     /* Путь 2: От центра вниз экрана */
-    .path-C2D { left: calc(50vw - 100px); animation: anim-C2D 5s linear forwards; }
-    @keyframes anim-C2D {
-        from { transform: translateY(18vh) scale(0.5); }
-        to { transform: translateY(110vh) scale(1.2); }
-    }
 
     .hidden { display: none !important; }
     /* Жесткий разворот поворачивающей машины ВЛЕВО */
-    #yogurt-turning-car .view-side {
-        transform: scaleX(-1) !important;
-    }
+
 
     /* Исправляем вращение колес, чтобы они не крутились назад после разворота */
     #yogurt-turning-car .view-side .wheel {
@@ -475,6 +483,124 @@
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
+    /* Фикс ориентации поворачивающей машины */
+
+
+    #yogurt-turning-car .view-rotate,
+    #yogurt-turning-car .view-front {
+
+    }
+
+
+
+    /* === ЖЁСТКОЕ ЗЕРКАЛО КАК У car-horizontal === */
+
+    /* ВАЖНО: зеркалим ВСЕ img внутри side-вида */
+    #yogurt-turning-car .view-side img {
+        transform: scaleX(-1);
+    }
+
+    /* Колёса тоже */
+    #yogurt-turning-car .view-side .wheel {
+        transform: scaleX(-1);
+    }
+
+    /* На других кадрах зеркала НЕТ */
+    #yogurt-turning-car .view-rotate img,
+    #yogurt-turning-car .view-front img {
+
+    }
+
+    /* ================= ОБРАТНАЯ ПОВОРАЧИВАЮЩАЯ МАШИНА ================= */
+
+    .v-wrapper {
+        position: relative;
+        width: var(--car-width-v);
+    }
+
+    /* 1 сценарий — машина едет ОТ ЦЕНТРА ВПРАВО */
+    #yogurt-turning-car-reverse.path-C2R .view-side img {
+        transform: scaleX(-1);
+    }
+
+    /* колёса тоже зеркалим */
+    #yogurt-turning-car-reverse.path-C2R .view-side .wheel {
+        transform: scaleX(-1);
+        animation: rotate-wheel-fixed 0.5s linear infinite;
+    }
+
+
+    #yogurt-turning-car-reverse .view-side .wheel {
+        animation: rotate-wheel-fixed 0.5s linear infinite;
+    }
+
+    /* движение снизу → центр */
+    .path-B2C {
+        left: 77vw;
+        animation: anim-B2C 5s linear forwards;
+    }
+
+    @keyframes anim-B2C {
+        from {
+            transform: translate(-300px, 110vh) scale(0.7);
+        }
+        to {
+            transform: translate(-300px, 35vh) scale(0.5);
+        }
+    }
+
+    /* движение от центра → вправо */
+    .path-C2R {
+        top: 35vh;
+        animation: anim-C2R 8s linear forwards;
+    }
+
+    @keyframes anim-C2R {
+        from {
+            transform: translateX(60vw) scale(1);
+        }
+        to {
+            transform: translateX(120vw) scale(1);
+        }
+    }
+
+    .special-turn-container { position: absolute; display: none; z-index: 12; }
+
+    /* Плавный переход кадров у поворачивающихся машин */
+    #yogurt-turning-car .view-side,
+    #yogurt-turning-car .view-rotate,
+    #yogurt-turning-car .view-front,
+    #yogurt-turning-car-reverse .view-side,
+    #yogurt-turning-car-reverse .view-rotate,
+    #yogurt-turning-car-reverse .view-front {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+    }
+
+    /* активный кадр */
+    #yogurt-turning-car .view-side:not(.hidden),
+    #yogurt-turning-car .view-rotate:not(.hidden),
+    #yogurt-turning-car .view-front:not(.hidden),
+    #yogurt-turning-car-reverse .view-side:not(.hidden),
+    #yogurt-turning-car-reverse .view-rotate:not(.hidden),
+    #yogurt-turning-car-reverse .view-front:not(.hidden) {
+        opacity: 1;
+    }
+
+
+    /* Лёгкий наклон машины в момент поворота */
+    .special-turn-container.turning {
+        transition: transform 0.6s ease-in-out;
+        transform: rotate(-6deg);
+    }
+
+    .special-turn-container.after-turn {
+        transform: rotate(0deg);
+    }
+
 
 </style>
 
@@ -535,17 +661,34 @@
 
     <div id="yogurt-turning-car" class="special-turn-container">
         <div class="h-wrapper view-side">
-            <img src="media/car_yogurt_2.png">
-            <img class="wheel front-wheel" src="media/koleso.png">
-            <img class="wheel back-wheel" src="media/koleso.png">
+            <img src="media/car_yogurt_2.png" alt="">
+            <img class="wheel front-wheel" src="media/koleso.png" alt="">
+            <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
         <div class="view-rotate hidden">
-            <img src="media/yogurt_car.png">
+            <img src="media/yogurt_car.png" alt="">
         </div>
         <div class="view-front hidden">
-            <img src="media/car_yogurt_1.png">
+            <img src="media/car_yogurt_1.png" alt="">
         </div>
     </div>
+
+    <div id="yogurt-turning-car-reverse" class="special-turn-container">
+        <div class="v-wrapper view-front">
+            <img src="media/car_yogurt_3.png" alt="">
+        </div>
+
+        <div class="view-rotate hidden">
+            <img src="media/yogurt_car.png" alt="">
+        </div>
+
+        <div class="h-wrapper view-side hidden">
+            <img src="media/car_yogurt_2.png" alt="">
+            <img class="wheel front-wheel" src="media/koleso.png" alt="">
+            <img class="wheel back-wheel" src="media/koleso.png" alt="">
+        </div>
+    </div>
+
 
     <!-- 5 СКЕЛЕТОВ вместо пешеходов -->
     <div class="skeleton pedestrian-horizontal" style="animation-delay: 0s;">
@@ -684,8 +827,8 @@
         <div class="legs-container"><img src="media/nogi1.png" alt="Legs"></div>
     </div>
 
-    <!-- ДОБАВЛЕННЫЕ: два дополнительных уникальных горизонтальных пешехода
-         те же по высоте/траектории, но с разным left и задержкой, чтобы быть на расстоянии -->
+
+
     <div class="skeleton pedestrian-horizontal-unique" style="animation-delay: 4s; left: 25%;">
         <div class="head"></div>
         <div class="torso"></div>
@@ -785,6 +928,8 @@
     const skeletons2 = Array.from(document.querySelectorAll('.skeleton2'));
     const buttons = Array.from(document.querySelectorAll('#scenarios-controls button'));
     const activeScenarioLabel = document.getElementById('active-scenario');
+    const turningCarReverse = document.getElementById('yogurt-turning-car-reverse');
+
 
     // Элементы специальной поворачивающей машины
     const turningCar = document.getElementById('yogurt-turning-car');
@@ -798,13 +943,13 @@
         ...pedestriansReverse
     ];
 
-    // === ЗАПИШЕМ top для горизонтальных машин (для сценария 1: "верхние" машины) ===
+    // === ЗАПИШЕМ top для горизонтальных машин ===
     carsHorizontal.forEach(car => {
         const topVal = car.style.top ? parseFloat(car.style.top) : NaN;
         car.dataset.topPercent = isNaN(topVal) ? 1000 : topVal;
     });
 
-    // === ДАННЫЕ ДЛЯ ПЕШЕХОДОВ (горизонтальных) ===
+    // === ДАННЫЕ ДЛЯ ПЕШЕХОДОВ ===
     const pedestriansData = [...pedestriansH, ...pedestriansUniqueH].map(ped => {
         const left = ped.style.left ? parseFloat(ped.style.left) : Math.random() * 90;
         const top = ped.style.top ? parseFloat(ped.style.top) : 100 + Math.random() * 50;
@@ -838,24 +983,24 @@
         car.classList.add('paused');
     });
 
-    // === ЛОГИКА ПОВОРОТА (ДЛЯ СЦЕНАРИЯ 1) ===
+    // === ЛОГИКА ПОВОРОТА (СЦЕНАРИЙ 1) ===
     function runTurningSequence() {
         if (!turningCar) return;
         stopTurningSequence();
 
         turningCar.style.display = 'block';
-        turningCar.style.right = '-200px';
-        turningCar.style.left = 'auto';
-        turningCar.style.top = '33%'; // Твой стиль: 33%
-        turningCar.className = 'special-turn-container';
+        turningCar.style.left = '0';
+        turningCar.style.top = '33%';
+
 
         const sideView = turningCar.querySelector('.view-side');
         const rotateView = turningCar.querySelector('.view-rotate');
         const frontView = turningCar.querySelector('.view-front');
 
-        // ОТЗЕРКАЛИВАНИЕ: Применяем scaleX(-1) именно к контейнеру вида сбоку
-        // Это развернет и кузов, и колеса, чтобы они ехали Справа Налево
+        // === ИЗМЕНЕНО: зеркалим ТОЛЬКО боковой вид ===
         sideView.style.transform = 'scaleX(-1)';
+        rotateView.style.transform = 'none';
+        frontView.style.transform = 'none';
 
         sideView.classList.remove('hidden');
         rotateView.classList.add('hidden');
@@ -870,19 +1015,18 @@
 
             if (progress < 1) {
                 let currentRight = -200 + (window.innerWidth * 0.5 + 200) * progress;
-                turningCar.style.right = currentRight + 'px';
+                turningCar.style.transform = `translateX(${120 - progress * 70}vw)`;
                 turnAnimFrame = requestAnimationFrame(toCenter);
             } else {
-                // Достигли центра
-                turningCar.style.right = '50%';
-                // Убираем scaleX при переходе на вид поворота, чтобы yogurt_car.png не отзеркалился случайно
-                turningCar.style.transform = 'translateX(50%)';
+                // === ИЗМЕНЕНО: точное центрирование без transform ===
+                turningCar.style.right = (window.innerWidth / 2 - 80) + 'px';
+
+                // === УДАЛЕНО: любые transform-переключения ===
 
                 sideView.classList.add('hidden');
                 rotateView.classList.remove('hidden');
 
                 turnSequenceTimer = setTimeout(() => {
-                    // Едем вниз
                     rotateView.classList.add('hidden');
                     frontView.classList.remove('hidden');
                     turningCar.className = 'special-turn-container path-C2D';
@@ -905,7 +1049,7 @@
         }
     }
 
-    // === ФУНКЦИИ АНИМАЦИИ СКЕЛЕТОВ ===
+    // === ОСТАЛЬНОЕ БЕЗ ИЗМЕНЕНИЙ ===
     const legFrames = ['media/nogi1.png', 'media/nogi2.png', 'media/nogi3.png'];
     let legFrame = 0;
     let legTimer = 0;
@@ -956,7 +1100,6 @@
         });
     }
 
-    // === СЦЕНАРИИ ===
     const scenarios = {
         1: {name:'Руки в стороны', horizontalCars:'top-only', verticalCars:'stop', pedestriansH:'unique-only', pedestriansV:'stop'},
         2: {name:'Правая рука вперед', horizontalCars:'go', verticalCars:'stop', pedestriansH:'stop', pedestriansV:'go'},
@@ -1020,12 +1163,44 @@
             setElementsState(pedestriansUniqueV, isVertGo);
             setElementsState(pedestriansReverse, isVertGo);
 
-            if (n == 1) runTurningSequence();
-
+            if (n == 1) runTurningSequence()
+            runReverseTurningSequence();
         }, 50);
+
     }
 
-    // === ОСНОВНОЙ ЦИКЛ ===
+
+    function runReverseTurningSequence() {
+        if (!turningCarReverse) return;
+
+        turningCarReverse.style.display = 'block';
+        turningCarReverse.className = 'special-turn-container path-B2C';
+
+        const frontView = turningCarReverse.querySelector('.view-front');
+        const rotateView = turningCarReverse.querySelector('.view-rotate');
+        const sideView = turningCarReverse.querySelector('.view-side');
+
+        frontView.classList.remove('hidden');
+        rotateView.classList.add('hidden');
+        sideView.classList.add('hidden');
+
+        // момент поворота (почти незаметный)
+        setTimeout(() => {
+            frontView.classList.add('hidden');
+            rotateView.classList.remove('hidden');
+
+            setTimeout(() => {
+                rotateView.classList.add('hidden');
+                sideView.classList.remove('hidden');
+
+                turningCarReverse.className =
+                    'special-turn-container path-C2R';
+
+            }, 120);
+        }, 5000);
+    }
+
+
     let lastTime = performance.now();
     function animate(time) {
         const delta = (time - lastTime) / 1000 || 0;

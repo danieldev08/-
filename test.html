@@ -39,33 +39,11 @@
         will-change: transform, opacity;
     }
 
-    /* Скрываем анимируемые элементы по умолчанию (чтобы не было миганий до запуска JS) */
-    .car-horizontal, .car-vertical, .pedestrian, .skeleton, .skeleton2 {
-        opacity: 0;
-        visibility: hidden;
-    }
-
     /* === МАШИНЫ ГОРИЗОНТАЛЬНЫЕ === */
     .car-horizontal {
         position: absolute;
         width: var(--car-width-h);
         z-index: 10;
-    }
-
-    /* FORCE: при задержке показывать from-кадр */
-    .car-horizontal.left-to-right,
-    .car-horizontal.right-to-left,
-    .car-vertical.bottom-to-top,
-    .car-vertical.top-to-bottom,
-    .car-vertical-unique-tb,
-    .car-vertical-unique-bt,
-    .pedestrian-horizontal,
-    .pedestrian-horizontal-unique,
-    .pedestrian-vertical,
-    .pedestrian-vertical-unique,
-    .pedestrian-vertical-reverse,
-    .pedestrian-vertical-reverse-unique {
-        animation-fill-mode: both;
     }
 
     .car-horizontal.left-to-right {
@@ -99,8 +77,8 @@
         animation: rotate-wheel 0.5s linear infinite;
     }
 
-    .car-horizontal .front-wheel { bottom: 19%; right: 11%; }
-    .car-horizontal .back-wheel { bottom: 19%; left: 10%; }
+    .car-horizontal .front-wheel { bottom: 5%; right: 10%; }
+    .car-horizontal .back-wheel { bottom: 5%; left: 11%; }
 
     @keyframes drive-lr {
         from { transform: translateX(calc(100vw + 220px)); }
@@ -138,32 +116,32 @@
     }
 
     @keyframes drive-bt {
-        from { transform: translate(38vw, 85vh) scale(1); }
-        to { transform: translate(46.5vw, -5vh) scale(0.05); }
+        from { transform: translate(30vw, 85vh) scale(1.2); }
+        to { transform: translate(50vw, -5vh) scale(0.05); }
     }
     @keyframes drive-tb {
-        from { transform: translate(54vw, -7vh) scale(0.05); }
-        to { transform: translate(60vw, 85vh) scale(1); }
+        from { transform: translate(43vw, -7vh) scale(0.05); }
+        to { transform: translate(50vw, 85vh) scale(1.2); }
     }
 
     .car-vertical-unique-tb {
         animation: drive-unique-tb var(--car-speed-vertical) linear infinite;
     }
     @keyframes drive-unique-tb {
-        0% { transform: translate(43.1vw, -5vh) scale(0.05) ; }
-        40% { transform: translate(53vw, 30vh) scale(0.5) ; }
-        70% { transform: translate(59vw, 60vh) scale(0.8) ; }
-        100% { transform: translate(60vw, 75vh) scale(1) ; }
+        0% { transform: translate(39vw, -7vh) scale(0.05) ; }
+        40% { transform: translate(49vw, 30vh) scale(0.5) ; }
+        70% { transform: translate(56vw, 60vh) scale(0.8) ; }
+        100% { transform: translate(60vw, 75vh) scale(1.2) ; }
     }
 
     .car-vertical-unique-bt {
         animation: drive-unique-bt var(--car-speed-vertical) linear infinite;
     }
     @keyframes drive-unique-bt {
-        0% { transform: translate(23vw, 85vh) scale(1) ; }
-        40% { transform: translate(30vw, 45vh) scale(0.8) ; }
-        70% { transform: translate(37vw, 15vh) scale(0.4) ; }
-        100% { transform: translate(43vw, -5vh) scale(0.05) ; }
+        0% { transform: translate(33vw, 85vh) scale(1.2) ; }
+        40% { transform: translate(35vw, 45vh) scale(0.8) ; }
+        70% { transform: translate(38vw, 15vh) scale(0.2) ; }
+        100% { transform: translate(40vw, -5vh) scale(0.05) ; }
     }
 
     /* === ПЕШЕХОДЫ === */
@@ -185,20 +163,19 @@
         top: 32%;
     }
 
-    /* Добавил анимацию по умолчанию для вертикальных пешеходов */
     .pedestrian-vertical {
         position: absolute;
         width: var(--pedestrian-w);
         height: var(--pedestrian-h);
         z-index: 6;
-        animation: walk-vertical var(--pedestrian-speed) linear infinite;
     }
+
 
     .skeleton .head, .skeleton2 .head { transform-origin: center center; }
     .skeleton .arm.left, .skeleton .arm.right,
     .skeleton2 .arm.left, .skeleton2 .arm.right { transform-origin: center top; }
 
-
+    /* Пешеход (визуальные стили) */
     .pedestrian::before {
         content: '';
         position: absolute;
@@ -227,7 +204,7 @@
         height: var(--pedestrian-h);
         z-index: 4;
         transform-origin: center bottom;
-
+        /* используем те же keyframes, но проигрываем в обратную сторону */
         animation: walk-vertical var(--pedestrian-speed) linear infinite;
         animation-direction: reverse;
     }
@@ -238,18 +215,18 @@
     }
 
     @keyframes walk-vertical-reverse {
-        0% { transform: translate(105vh, -4vh) scale(0.01) }
-        100% { ;transform: translate(110vw, 100vh) scale(0.12); }
+        0% { transform: translate(50vw, 100vh) scale(0.12); }
+        100% { transform: translate(50vw, -10vh) scale(0.02); }
     }
 
     @keyframes walk-horizontal {
-        from { transform: translateX(-600px) scale(0.05); }
-        to { transform: translateX(calc(100vw + 60px)) scale(0.07); }
+        from { transform: translateX(-60px) scale(0.05); }
+        to { transform: translateX(calc(90vw + 60px)) scale(0.07); }
     }
 
     @keyframes walk-vertical {
-        from { transform: translate(53.5vw, -1vh) scale(0.01); }
-        to { transform: translate(100vw, 100vh) scale(0.12); }
+        from { transform: translate(40vw, 0vh) scale(0.02); }
+        to { transform: translate(90vw, 100vh) scale(0.12); }
     }
 
     .pedestrian-vertical-unique {
@@ -257,8 +234,8 @@
     }
 
     @keyframes walk-vertical-unique {
-        0% { transform: translate(55vw, 3vh) scale(0.01); }
-        30% { transform: translate(41vw, 25vh) scale(0.05); }
+        0% { transform: translate(51vw, 0vh) scale(0.01); }
+        30% { transform: translate(35vw, 25vh) scale(0.05); }
         60% { transform: translate(23vw, 60vh) scale(0.08); }
         100% { transform: translate(8vw, 105vh) scale(0.12); }
     }
@@ -275,8 +252,7 @@
     }
 
     /* ВТОРИЧНЫЕ СТИЛИ СКЕЛЕТА (голова по умолчанию над туловищем) */
-    /* ВАЖНО: scope селекторы к .skeleton/.skeleton2, чтобы не применялись глобально */
-    .skeleton .head, .skeleton2 .head {
+    .head {
         position: absolute;
         top: 100px;
         left: 270px;
@@ -284,11 +260,9 @@
         height: 496px;
         background: url('media/golova.png') no-repeat center / contain;
         z-index: 10; /* по умолчанию голова выше туловища */
-        /* скрываем визуально до момента, когда скелет активен (устраняет "гигантов" при загрузке) */
-        visibility: hidden;
     }
 
-    .skeleton .torso, .skeleton2 .torso {
+    .torso {
         position: absolute;
         top: 400px;
         left: 60px;
@@ -297,7 +271,6 @@
         background: url('media/telo.png') no-repeat center / contain;
         transform-origin: top center;
         z-index: 5; /* туловище ниже по умолчанию */
-        visibility: hidden;
     }
 
     /* Для пешеходов, которые идут СНИЗУ→ВВЕРХ, голова должна быть под туловищем */
@@ -466,7 +439,7 @@
     .special-turn-container { position: absolute; display: none; z-index: 12; width:180px; height:120px; pointer-events:none; }
     .special-turn-container img { width: 100%; display: block; }
 
-    /* Колёса: присутствуют в ALL видах, но opacity управляется JS */
+    /* Колёса: присутствуют в всех видах, но opacity управляется JS */
     .view-side .wheel, .view-front .wheel, .view-rotate .wheel {
         width:33px; position:absolute; top:39px; opacity:0; z-index:30; transition: opacity 160ms linear;
     }
@@ -484,196 +457,122 @@
     .path-L2C { top: 23%; animation: anim-L2C 5s linear forwards; }
     @keyframes anim-L2C { from { transform: translateX(-220px); } to { transform: translateX(calc(50vw - 80px)); } }
     .path-C2D { animation: anim-C2D 10s linear forwards; }
-<<<<<<< Updated upstream
     @keyframes anim-C2D { from { transform: translate(15vw, 0vh) scale(0.2); } to { transform: translate(-25vw, 150vh) scale(0.25); } }
 
-=======
-       anim-C2D { from { transform: translate(15vw, 0vh) scale(0.2); } to { transform: translate(-25vw, 150vh) scale(0.25); } }
-    .path-R2C { top: 50%; animation: anim-R2C 5s linear forwards; }
-    @keyframes anim-R2C { from { transform: translateX(calc(100vw + 220px)); } to { transform: translateX(calc(50vw + 80px)); } }
-
-    .path-C2U { animation: anim-C2U 10s linear forwards; }
-    @keyframes anim-C2U {
-        0% { transform: translate(15vw, 0vh) scale(0.25); }
-        50% { transform: translate(30vw, -75vh) scale(0.15); }
-        100% { transform: translate(45vw, -150vh) scale(0.05); }
-    }
->>>>>>> Stashed changes
     .hidden { display: none !important; }
     .view-side, .view-rotate, .view-front { position:absolute; top:0; left:0; opacity:0; transition: opacity .25s ease; }
     .view-side:not(.hidden), .view-rotate:not(.hidden), .view-front:not(.hidden) { opacity:1; }
 
-    :root {
-        --ped-vertical-animation: walk-vertical;
-        --ped-vertical-unique-animation: walk-vertical-unique;
-        --ped-vertical-reverse-animation: walk-vertical-reverse;
-        --ped-vertical-reverse-unique-animation: walk-vertical-unique;
+    /* Controls panel styles */
+    #rev-controls {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        z-index: 10000;
+        background: rgba(0,0,0,0.75);
+        color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        width: 280px;
+        box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+        max-height: 85vh;
+        overflow: auto;
     }
-
-    .pedestrian-vertical,
-    .skeleton.pedestrian-vertical {
-        animation-name: var(--ped-vertical-animation, walk-vertical) !important;
-    }
-
-    .pedestrian-vertical-unique,
-    .skeleton.pedestrian-vertical-unique {
-        animation-name: var(--ped-vertical-unique-animation, walk-vertical-unique) !important;
-    }
-
-    .pedestrian-vertical-reverse,
-    .skeleton2.pedestrian-vertical-reverse {
-        animation-name: var(--ped-vertical-reverse-animation, walk-vertical-reverse) !important;
-    }
-
-    /* ---------------- Регулировщик (позы) ---------------- */
-    /* регулятор должен быть ниже машин (z-index < 5/10) но выше фона #scene */
-    .regulator {
-        position: absolute;
-        left: 50%;
-        top: 30%;
-        transform: translate(-50%, -50%);
-        width: 100px;
-        height: auto;
-        z-index: 4; /* ниже машин (car-vertical z=5, car-horizontal z=10), выше текста фона */
-        pointer-events: none;
-    }
-    .regulator img { width: 100%; height: auto; display: block; transition: opacity 160ms ease; }
-<<<<<<< Updated upstream
-    /* ----------------------------------------------------- */
-=======
->>>>>>> Stashed changes
-
+    #rev-controls label { display:block; margin-top:8px; font-size:12px; opacity:0.95; }
+    #rev-controls input[type="range"] { width: 100%; margin-top:4px; }
+    #rev-controls .controls-row { display:flex; gap:8px; margin-top:8px; }
+    #rev-controls button { padding:8px; border-radius:6px; border: none; cursor:pointer; background: #3b82f6; color:white; font-weight:600; }
+    #rev-controls button.secondary { background:#10b981; }
+    #rev-controls .small { font-size:11px; opacity:0.8; margin-top:8px; }
 </style>
 
 <div id="scene">
     <div id="active-scenario">Сценарий: Не выбран</div>
 
-    <!-- Регулировщик: положите ваши три файла в media как regulator_side.png, regulator_right.png, regulator_up.png -->
-    <div id="regulator" class="regulator" aria-hidden="true">
-        <img id="regulator-sprite" src="media/Gemini_Generated_Image_izaf8hizaf8hizaf%20(1).png" alt="Регулировщик">
-    </div>
-
     <div class="car-horizontal left-to-right" style="animation-delay: 3s; top: 20%;">
-        <img class="car-body" src="media/white/car_white_3.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
     <div class="car-horizontal left-to-right" style="animation-delay: 9s; top: 24%;">
-        <img class="car-body" src="media/yellow/car_yellow_3.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
     <div class="car-horizontal left-to-right" style="animation-delay: 15s; top: 20%;">
-        <img class="car-body" src="media/grey/car_grey_3.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
 
     <div class="car-horizontal right-to-left" style="animation-delay: 0s; top: 33%;">
-        <img class="car-body" src="media/green/car_green_3.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
     <div class="car-horizontal right-to-left" style="animation-delay: 6s; top: 33%;">
-        <img class="car-body" src="media/blue/car_blue_3.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
     <div class="car-horizontal right-to-left" style="animation-delay: 12s; top: 29%;">
-        <img class="car-body" src="media/yogurt/car_yogurt_2.png" alt="Car">
+        <img class="car-body" src="media/car_yogurt_2.png" alt="Car">
         <img class="wheel front-wheel" src="media/koleso.png" alt="Wheel">
         <img class="wheel back-wheel" src="media/koleso.png" alt="Wheel">
     </div>
 
     <div class="car-vertical car-vertical-unique-tb" style="animation-delay: 0s; left: 5%;">
-        <img src="media/yogurt/car_yogurt_4.png" alt="Car">
+        <img src="media/car_yogurt_1.png" alt="Car">
     </div>
     <div class="car-vertical top-to-bottom" style="animation-delay: 5s; left: 2%;">
-<<<<<<< Updated upstream
-        <img src="media/car_yogurt_3.png" alt="Car">
+        <img src="media/car_yogurt_1.png" alt="Car">
     </div>
     <div class="car-vertical top-to-bottom" style="animation-delay: 10s; left: 2%;">
-        <img src="media/car_yogurt_3.png" alt="Car">
-=======
-        <img src="media/blue/car_blue_2.png" alt="Car">
-    </div>
-    <div class="car-vertical top-to-bottom" style="animation-delay: 10s; left: 2%;">
-        <img src="media/green/car_green_11.png" alt="Car">
->>>>>>> Stashed changes
+        <img src="media/car_yogurt_1.png" alt="Car">
     </div>
 
     <div class="car-vertical car-vertical-unique-bt" style="animation-delay: 2s; left: 5%;">
-        <img src="media/yellow/car_yellow_2.png" alt="Car">
+        <img src="media/car_yogurt_3.png" alt="Car">
     </div>
     <div class="car-vertical bottom-to-top" style="animation-delay: 7s; left: -5%;">
-<<<<<<< Updated upstream
-        <img src="media/car_yogurt_1.png" alt="Car">
+        <img src="media/car_yogurt_3.png" alt="Car">
     </div>
     <div class="car-vertical bottom-to-top" style="animation-delay: 12s; left: -5%;">
-        <img src="media/car_yogurt_1.png" alt="Car">
-=======
-        <img src="media/white/car_white_1.png" alt="Car">
-    </div>
-    <div class="car-vertical bottom-to-top" style="animation-delay: 12s; left: -5%;">
-        <img src="media/grey/car_grey_1.png" alt="Car">
->>>>>>> Stashed changes
+        <img src="media/car_yogurt_3.png" alt="Car">
     </div>
 
     <div id="yogurt-turning-car" class="special-turn-container" aria-hidden="true">
         <div class="h-wrapper view-side">
-<<<<<<< Updated upstream
             <img src="media/car_yogurt_2.png" alt="">
-=======
-            <img src="media/white/car_white_3.png" alt="">
->>>>>>> Stashed changes
             <img class="wheel front-wheel" src="media/koleso.png" alt="">
             <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
         <div class="view-rotate hidden">
-<<<<<<< Updated upstream
             <img src="media/yogurt_car.png" alt="">
-=======
-            <img src="media/white/car_white.png" alt="">
->>>>>>> Stashed changes
             <img class="wheel front-wheel" src="media/koleso.png" alt="">
             <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
         <div class="view-front hidden">
-<<<<<<< Updated upstream
             <img src="media/car_yogurt_1.png" alt="">
-=======
-            <img src="media/white/car_white_1.png" alt="">
->>>>>>> Stashed changes
         </div>
     </div>
 
     <div id="yogurt-turning-car-reverse" class="special-turn-container" aria-hidden="true">
         <div class="v-wrapper view-front">
-<<<<<<< Updated upstream
             <img src="media/car_yogurt_3.png" alt="">
-=======
-            <img src="media/yogurt/car_yogurt_3.png" alt="">
->>>>>>> Stashed changes
             <img class="wheel front-wheel" src="media/koleso.png" alt="">
             <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
 
         <div class="view-rotate hidden">
-<<<<<<< Updated upstream
             <img src="media/yogurt_car.png" alt="">
-=======
-            <img src="./media/yogurt/car_yogurt.png" alt="">
->>>>>>> Stashed changes
             <img class="wheel front-wheel" src="media/koleso.png" alt="">
             <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
 
         <div class="h-wrapper view-side hidden">
-<<<<<<< Updated upstream
             <img src="media/car_yogurt_2.png" alt="">
-=======
-            <img src="media/yogurt/car_yogurt_2.png" alt="">
->>>>>>> Stashed changes
             <img class="wheel front-wheel" src="media/koleso.png" alt="">
             <img class="wheel back-wheel" src="media/koleso.png" alt="">
         </div>
@@ -788,8 +687,8 @@
         </div>
         <div class="arm right">
             <div class="upper-arm left" style="background-image:url('media/paren_ruka-1.png');">
-                <div class="forearm left" style="background-image:url('media/paren_ruka-2.png');">
-                    <div class="hand left" style="background-image:url('media/paren_ruka-3.png');"></div>
+                <div class="forearm left" style="background-image:url('media/paren_ruka-1.png');">
+                    <div class="hand left" style="background-image:url('media/paren_ruka-1.png');"></div>
                 </div>
             </div>
         </div>
@@ -817,97 +716,83 @@
             <span class="button-label">Едут: верх↔низ</span>
         </button>
     </div>
+
+    <!-- Trajectory controls for reverse car -->
+    <div id="rev-controls" aria-hidden="false">
+        <div style="font-weight:700; margin-bottom:6px;">Настройка траектории реверса</div>
+
+        <label>startXOffsetFromRight <span id="lbl-startX">420</span></label>
+        <input id="inp-startX" type="range" min="100" max="800" value="420">
+
+        <label>startYOffset <span id="lbl-startY">60</span></label>
+        <input id="inp-startY" type="range" min="0" max="300" value="60">
+
+        <label>upTargetY (px) <span id="lbl-upY">350</span></label>
+        <input id="inp-upY" type="range" min="50" max="900" value="350">
+
+        <label>arcControlY <span id="lbl-arcY">100</span></label>
+        <input id="inp-arcY" type="range" min="10" max="400" value="100">
+
+        <label>arcDeltaX <span id="lbl-arcX">220</span></label>
+        <input id="inp-arcX" type="range" min="20" max="600" value="220">
+
+        <label>arcStep <span id="lbl-step">0.012</span></label>
+        <input id="inp-step" type="range" min="0.004" max="0.03" step="0.001" value="0.012">
+
+        <label>speedUp <span id="lbl-upSpd">1.8</span></label>
+        <input id="inp-upSpd" type="range" min="0.4" max="6" step="0.1" value="1.8">
+
+        <label>speedRight <span id="lbl-rightSpd">1.8</span></label>
+        <input id="inp-rightSpd" type="range" min="0.4" max="8" step="0.1" value="1.8">
+
+        <div class="controls-row">
+            <button id="btn-apply-rev">Применить</button>
+            <button id="btn-randomize-rev" class="secondary">Случай</button>
+        </div>
+        <div class="small">Нажмите Применить, чтобы перезапустить реверс и увидеть изменения.</div>
+    </div>
 </div>
 
 <script>
-<<<<<<< Updated upstream
-    /* МИНИМАЛЬНЫЕ И БЕЗОПАСНЫЕ ИЗМЕНЕНИЯ:
-       добавлен визуальный регулятор (регулировщик) и логика переключения поз по сценарию.
-       Положите ваши 3 картинки в папку media как:
-         - regulator_side.png   (руки в стороны / нейтраль)
-         - regulator_right.png  (правая рука вперед)
-         - regulator_up.png     (рука вверх / стоп)
+    /* Исправленный JS — гарантированный полный сброс состояния поворачивающихся машин перед каждым стартом.
+       Вставляйте этот скрипт вместо вашего старого <script>.
     */
 
     // ---- Utilities ----
-=======
->>>>>>> Stashed changes
     function clearAnimationRecursively(root) {
         if (!root) return;
         const nodes = [root, ...Array.from(root.querySelectorAll('*'))];
         nodes.forEach(n => {
             try { n.style.animation = 'none'; n.style.transition = ''; } catch (e) {}
         });
+        // force reflow to clear animation progress
         void root.offsetWidth;
-        nodes.forEach(n => { try { n.style.animation = ''; } catch (e) {} });
+        // allow future animations to be added anew
+        nodes.forEach(n => {
+            try { n.style.animation = ''; } catch (e) {}
+        });
     }
 
+    // Async reset that ensures browser applied style changes before resolving
     function resetTurningCarStateAsync(carEl, views = [], wheels = [], startX, startY) {
         return new Promise(resolve => {
             if (!carEl) return resolve();
             carEl.classList.remove('path-L2C','path-C2D','path-B2C','path-C2R');
+
             clearAnimationRecursively(carEl);
+
             (views || []).forEach(v => v.classList.add('hidden'));
             (wheels || []).forEach(w => { w.style.opacity = '0'; w.classList.remove('spinning'); w.style.transform = 'none'; });
+
             if (typeof startX === 'number') carEl.style.left = startX + 'px';
             if (typeof startY === 'number') carEl.style.top = startY + 'px';
             carEl.style.transform = '';
             carEl.style.right = '';
             carEl.style.display = 'none';
             carEl.style.opacity = '1';
+
+            // wait one frame to be safe (ensure styles applied)
             requestAnimationFrame(() => setTimeout(resolve, 16));
-        });
-    }
-
-    // ---- Sprite update for vertical cars ----
-    function updateVerticalCarSprites() {
-        if (currentScenario === 4) {
-            restoreVerticalCarOriginalSprites();
-            return;
-        }
-
-        const frameTopToBottom = 'car_yogurt_1.png';
-        const frameBottomToTop = 'car_yogurt_3.png';
-
-        carsVertical.forEach(c => {
-            if (c.classList.contains('car-vertical-unique-tb') || c.classList.contains('car-vertical-unique-bt')) return;
-            const img = c.querySelector('img');
-            if (!img) return;
-            if (img.dataset && img.dataset.originalNoOverride === 'true') return;
-
-            if (c.classList.contains('top-to-bottom')) {
-                const name = img.src.split('/').pop();
-                if (name !== frameTopToBottom) img.src = 'media/' + frameTopToBottom;
-                return;
-            }
-            if (c.classList.contains('bottom-to-top')) {
-                const name = img.src.split('/').pop();
-                if (name !== frameBottomToTop) img.src = 'media/' + frameBottomToTop;
-                return;
-            }
-
-            const rect = c.getBoundingClientRect();
-            const mid = window.innerWidth / 2;
-            if (rect.left + rect.width / 2 < mid) {
-                const name = img.src.split('/').pop();
-                if (name !== frameTopToBottom) img.src = 'media/' + frameTopToBottom;
-            } else {
-                const name = img.src.split('/').pop();
-                if (name !== frameBottomToTop) img.src = 'media/' + frameBottomToTop;
-            }
-        });
-    }
-
-    function restoreVerticalCarOriginalSprites() {
-        carsVertical.forEach(c => {
-            const img = c.querySelector('img');
-            if (!img) return;
-            if (img.dataset && img.dataset.origSrc) {
-                const orig = img.dataset.origSrc;
-                if (!img.src.endsWith(orig)) {
-                    img.src = orig;
-                }
-            }
         });
     }
 
@@ -942,20 +827,13 @@
         ...pedestriansReverse
     ];
 
-    // сохраняем процент top у горизонтальных машин для фильтрации
+    // store top for horizontal filtering
     carsHorizontal.forEach(car => {
         const topVal = car.style.top ? parseFloat(car.style.top) : NaN;
         car.dataset.topPercent = isNaN(topVal) ? 1000 : topVal;
     });
 
-    // Сохраняем оригинальные src вертикальных машин
-    carsVertical.forEach(c => {
-        const img = c.querySelector('img');
-        if (!img) return;
-        const attr = img.getAttribute('src') || '';
-        img.dataset.origSrc = attr;
-    });
-
+    // pedestrians parallax data
     const pedestriansData = [...pedestriansH, ...pedestriansUniqueH].map(ped => {
         const left = ped.style.left ? parseFloat(ped.style.left) : Math.random() * 90;
         const top = ped.style.top ? parseFloat(ped.style.top) : 100 + Math.random() * 50;
@@ -963,51 +841,11 @@
         return { el: ped, left, top, speed };
     });
 
-    // initial setup: ставим начальные offscreen-позиции и paused
-    [...pedestriansV, ...pedestriansUniqueV].forEach(p => {
-        if (!p.dataset.init) {
-            p.style.opacity = 0;
-            p.classList.add('paused');
-            p.dataset.init = '1';
-        }
-    });
-
-    pedestriansReverse.forEach(p => {
-        if (!p.dataset.init) {
-            p.style.transform = 'translate(50vw, 100vh) scale(0.12)';
-            p.style.opacity = 0;
-            p.classList.add('paused');
-            p.dataset.init = '1';
-        }
-    });
-
-    carsHorizontal.forEach(c => {
-        if (!c.dataset.init) {
-            c.style.transform = 'translateX(-10vw) scale(0.05)';
-            c.style.opacity = 0;
-            c.classList.add('paused');
-            c.dataset.init = '1';
-        }
-    });
-
-    carsVertical.forEach(c => {
-        if (!c.dataset.init) {
-            c.style.transform = 'translateY(-10vh) scale(0.05)';
-            c.style.opacity = 0;
-            c.classList.add('paused');
-            c.dataset.init = '1';
-        }
-    });
-
-
-    // Скрываем головы/туловища по умолчанию (CSS уже сделал visibility:hidden),
-    // но на всякий случай синхронизируем inline-стили (кросс-браузер)
-    skeletonsAll.forEach(sk => {
-        const head = sk.querySelector('.head');
-        const torso = sk.querySelector('.torso');
-        if (head) head.style.visibility = 'hidden';
-        if (torso) torso.style.visibility = 'hidden';
-    });
+    // initial setup for some elements
+    [...pedestriansV, ...pedestriansUniqueV].forEach(p => { p.style.transform = 'translate(53vw, -5vh) scale(0.05)'; p.style.opacity = 0; p.classList.add('paused'); });
+    pedestriansReverse.forEach(p => { p.style.transform = 'translate(50vw, 100vh) scale(0.12)'; p.style.opacity = 0; p.classList.add('paused'); });
+    carsHorizontal.forEach(c => { c.style.transform = 'translateX(-10vw) scale(0.05)'; c.style.opacity = 0; c.classList.add('paused'); });
+    carsVertical.forEach(c => { c.style.transform = 'translateY(-10vh) scale(0.05)'; c.style.opacity = 0; c.classList.add('paused'); });
 
     function showWheels(wheels, show) {
         wheels.forEach(w => {
@@ -1016,53 +854,12 @@
         });
     }
 
-    // --- Регулировщик: загрузка поз и переключение ---
-    const regulatorImg = document.getElementById('regulator-sprite');
-    const regulatorMap = {
-        // mapping scenarios -> filenames (положите эти файлы в media/)
-        1: 'Gemini_Generated_Image_izaf8hizaf8hizaf (1).png', // сценарий 1 — правая рука вперед
-        2: '',  // сценарий 2 — можно изменить при желании
-        3: 'Gemini_Generated_Image_tnim8btnim8btnim.png',    // сценарий 3 — рука вверх (стоп)
-        4: 'Gemini_Generated_Image_3bwzd33bwzd33bwz.png'   // сценарий 4 — нейтраль / руки по линии
-    };
-    let _regPreloaded = false;
-
-    function tryLoad(src) {
-        return new Promise(resolve => {
-            const img = new Image();
-            img.onload = () => resolve(src);
-            img.onerror = () => resolve(null);
-            img.src = 'media/' + src;
-        });
-    }
-
-    async function preloadRegulatorImages() {
-        const names = Array.from(new Set(Object.values(regulatorMap)));
-        for (const n of names) {
-            // eslint-disable-next-line no-await-in-loop
-            await tryLoad(n);
-        }
-        _regPreloaded = true;
-    }
-
-    async function setRegulatorPose(scenarioNumber) {
-        if (!_regPreloaded) await preloadRegulatorImages();
-        const fname = regulatorMap[scenarioNumber] || regulatorMap[4] || Object.values(regulatorMap)[0];
-        if (!fname) return;
-        regulatorImg.style.opacity = '0';
-        setTimeout(() => {
-            regulatorImg.src = 'media/' + fname;
-            regulatorImg.style.opacity = '1';
-        }, 120);
-    }
-    // --- конец регулятора ---
-
     // ---- MAIN arc (right -> center -> arc down -> down) ----
     let mainRAF = null, mainCycleTimeout = null;
     let mainCancelled = false;
     const mainParams = {
         startXOffset: 420,
-        startY: Math.round(window.innerHeight * 0.25),
+        startY: Math.round(window.innerHeight * 0.35),
         moveLeftSpeed: 1.8,
         centerX: Math.round(window.innerWidth * 0.5),
         arcControlX: 80,
@@ -1082,8 +879,10 @@
         if (which === 'turn') mainRotate.classList.remove('hidden');
         if (which === 'front') mainFront.classList.remove('hidden');
 
+        // Per request: do NOT show wheels in front/top->down view
         showWheels(mainWheels, which === 'side' || which === 'turn');
 
+        // main side should face LEFT; if asset faces right, change to -1
         const img = mainSide.querySelector('img'); if (img) img.style.transform = 'scaleX(1)';
     }
 
@@ -1097,6 +896,7 @@
         showWheels(mainWheels, false);
         const startX = window.innerWidth + mainParams.startXOffset;
         const startY = mainParams.startY;
+        // synchronous reset OK here (we also use async reset before start)
         resetTurningCarStateAsync(turningCar, [mainSide, mainRotate, mainFront], mainWheels, startX, startY);
     }
 
@@ -1106,6 +906,7 @@
 
         const startX = window.innerWidth + mainParams.startXOffset;
         const startY = mainParams.startY;
+        // wait for a guaranteed reset
         await resetTurningCarStateAsync(turningCar, [mainSide, mainRotate, mainFront], mainWheels, startX, startY);
 
         mainCancelled = false;
@@ -1156,6 +957,7 @@
             mainRAF = requestAnimationFrame(arcStep);
         }
 
+        // ЗАМЕНА: при выходе — полностью остановить и перезапустить цикл (сброс локальных x/y)
         function moveDown(currX, currY) {
             let posX = currX, posY = currY;
             function stepDown() {
@@ -1173,7 +975,10 @@
                     turningCar.style.opacity = '0';
 
                     mainCycleTimeout = setTimeout(() => {
+                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ:
+                        // Полный стоп и рестарт для сброса координат x и y в замыкании
                         stopMainArc();
+                        // Небольшая задержка, чтобы стоп успел очистить всё
                         setTimeout(() => {
                             startMainArc();
                         }, 16);
@@ -1186,27 +991,18 @@
         mainRAF = requestAnimationFrame(moveLeft);
     }
 
-<<<<<<< Updated upstream
-    // ---- REVERSE arc ----
+    // ---- REVERSE arc (bottom -> up -> arc right -> right) ----
     let revRAF = null, revCycleTimeout = null;
     let revCancelled = false;
     const revParams = {
-        startXOffsetFromRight: 520,
+        startXOffsetFromRight: 420,
         startYOffset: 60,
-=======
-    let revRAF = null, revCycleTimeout = null;
-    let revCancelled = false;
-    const revParams = {
-        startXOffsetFromRight: 50,
-        startYOffset: 50,
->>>>>>> Stashed changes
         upTargetY: Math.round(window.innerHeight * 0.45),
         speedUp: 1.8,
         arcControlY: 100,
         arcDeltaX: 220,
         arcStep: 0.012,
         speedRight: 1.8,
-        upDriftX: 0.8,
         exitPadding: 200,
         pauseBetweenCycles: 500
     };
@@ -1223,8 +1019,8 @@
 
         if (which === 'side') {
             const img = revSide.querySelector('img');
-            if (img) img.style.transform = 'scaleX(-1)';
-            revWheels.forEach(w => w.style.transform = 'none');
+            if (img) img.style.transform = 'scaleX(-1)'; // reverse faces right
+            revWheels.forEach(w => w.style.transform = 'scaleX(-1)');
         } else {
             const img = revSide.querySelector('img');
             if (img) img.style.transform = 'none';
@@ -1240,11 +1036,7 @@
         turningCarReverse.style.display = 'none';
         [revFront, revRotate, revSide].forEach(v => v.classList.add('hidden'));
         showWheels(revWheels, false);
-<<<<<<< Updated upstream
-        const startX = Math.max(window.innerWidth - revParams.startXOffsetFromRight, 10);
-=======
-        const startX = Math.max(window.innerWidth - revParams.startXOffsetFromRight, 100);
->>>>>>> Stashed changes
+        const startX = Math.max(window.innerWidth - revParams.startXOffsetFromRight, 300);
         const startY = window.innerHeight + revParams.startYOffset;
         resetTurningCarStateAsync(turningCarReverse, [revFront, revRotate, revSide], revWheels, startX, startY);
     }
@@ -1252,80 +1044,48 @@
     async function startReverseThreePhase() {
         if (!turningCarReverse) return;
         stopReverseThreePhase();
-<<<<<<< Updated upstream
 
-        // 1. Стартовая точка — низ экрана, центр правой полосы (подберите по вашему фону!)
-        const centerX = window.innerWidth * 0.61;     // подберите этот коэффициент (0.61) так, чтобы было по полосе (правее центра)
-        const startX = centerX;
-        const startY = window.innerHeight + 40;       // чуть ниже экрана
-
-        // 2. Точка перед началом дуги (парадный вход на перекрёсток)
-        const vertEndY = window.innerHeight * 0.47;    // где начать поворот
-=======
-        const centerX = window.innerWidth * 0.71;
-        const startX = centerX;
-        const startY = window.innerHeight + 40;
-
-        const vertEndY = window.innerHeight * 0.23;
->>>>>>> Stashed changes
-
+        const startX = Math.max(window.innerWidth - revParams.startXOffsetFromRight, 300);
+        const startY = window.innerHeight + revParams.startYOffset;
         await resetTurningCarStateAsync(turningCarReverse, [revFront, revRotate, revSide], revWheels, startX, startY);
 
         revCancelled = false;
         turningCarReverse.style.display = 'block';
-        turningCarReverse.style.transform = 'scale(0.85)';
         turningCarReverse.style.left = startX + 'px';
         turningCarReverse.style.top = startY + 'px';
         turningCarReverse.style.opacity = '1';
+        turningCarReverse.style.transition = '';
 
         showRevFrame('front');
         showWheels(revWheels, false);
 
-        let x = startX;
-        let y = startY;
+        let x = startX, y = startY;
 
-<<<<<<< Updated upstream
-        // === 1. Движение строго вверх ===
         function moveUp() {
             if (revCancelled) return;
-            y -= 2.3;
-=======
-        function moveUp() {
-            if (revCancelled) return;
-            y -= 2.3;      // вверх
-            x -= 0.8;      // добавляем сдвиг вправо (диагональ!)
->>>>>>> Stashed changes
-            turningCarReverse.style.left = x + 'px';
+            y -= revParams.speedUp;
             turningCarReverse.style.top = y + 'px';
-            showRevFrame('front');
-
-            if (y > vertEndY) {
-                revRAF = requestAnimationFrame(moveUp);
-            } else {
-                startRightArc(x, y);
-            }
+            if (y > revParams.upTargetY) revRAF = requestAnimationFrame(moveUp);
+            else startArc();
         }
 
-        // === 2. Безье-поворот направо ===
-        function startRightArc(px, py) {
-            // Безье: p0 = (px, py), p1 — задаёт "радиус поворота", p2 — выход вправо
+        function startArc() {
             let t = 0;
-            const arcRadius = 160; // радиус дуги, можно ~120..180 подбирать под фон
-            const p0 = { x: px, y: py };
-            const p1 = { x: px + arcRadius * 1.0, y: py + 100 }; // точка контроля ~вправо и чуть вниз
-            const p2 = { x: px + arcRadius * 2.2, y: py + 100 }; // конечная точка — конец поворота (выезд вправо)
+            const p0 = { x: x, y: y };
+            const p1 = { x: x, y: y - revParams.arcControlY };
+            const p2 = { x: x + revParams.arcDeltaX, y: y - revParams.arcControlY };
 
             function arcStep() {
                 if (revCancelled) return;
-                t = Math.min(1, t + 0.012);
-                const nx = (1 - t) * (1 - t) * p0.x + 2 * (1 - t) * t * p1.x + t * t * p2.x;
-                const ny = (1 - t) * (1 - t) * p0.y + 2 * (1 - t) * t * p1.y + t * t * p2.y;
+                t = Math.min(1, t + revParams.arcStep);
+                const nx = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x;
+                const ny = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y;
                 turningCarReverse.style.left = nx + 'px';
                 turningCarReverse.style.top = ny + 'px';
 
-                // Смена вида: turn → side
-                if (t < 0.5) showRevFrame('turn');
-                else showRevFrame('side');
+                if (t > 0.2 && t < 0.8) showRevFrame('turn');
+                else if (t >= 0.8) showRevFrame('side');
+                else showRevFrame('front');
 
                 if (t < 1) revRAF = requestAnimationFrame(arcStep);
                 else moveRight(nx, ny);
@@ -1333,36 +1093,105 @@
             revRAF = requestAnimationFrame(arcStep);
         }
 
-        // === 3. Прямой участок вправо ===
+        // ЗАМЕНА: при выходе — полностью остановить и перезапустить цикл (сброс локальных x/y)
         function moveRight(currX, currY) {
             let posX = currX, posY = currY;
             function stepRight() {
                 if (revCancelled) return;
-                posX += 2.6; // скорость вправо
+                posX += revParams.speedRight;
                 turningCarReverse.style.left = posX + 'px';
-                turningCarReverse.style.top = posY + 'px';
                 showRevFrame('side');
-                if (posX < window.innerWidth + 200) {
+
+                if (posX < window.innerWidth + revParams.exitPadding) {
                     revRAF = requestAnimationFrame(stepRight);
                 } else {
-                    finish();
+                    turningCarReverse.style.transition = 'opacity 200ms';
+                    turningCarReverse.style.opacity = '0';
+
+                    revCycleTimeout = setTimeout(() => {
+                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ:
+                        // Полный стоп и рестарт для сброса координат x и y в замыкании
+                        stopReverseThreePhase();
+                        setTimeout(() => {
+                            startReverseThreePhase();
+                        }, 16);
+                    }, 200);
                 }
             }
             revRAF = requestAnimationFrame(stepRight);
         }
 
-        function finish() {
-            turningCarReverse.style.transition = 'opacity 180ms';
-            turningCarReverse.style.opacity = '0';
-            revCycleTimeout = setTimeout(() => {
-                stopReverseThreePhase();
-                setTimeout(startReverseThreePhase, 32);
-            }, 180);
-        }
-
-        // Старт движения!
         revRAF = requestAnimationFrame(moveUp);
     }
+
+    // ---- Trajectory controls binding (init) ----
+    (function initRevControls() {
+        const panel = document.getElementById('rev-controls');
+        if (!panel) return;
+
+        const map = {
+            startX: ['inp-startX', 'lbl-startX', v => { revParams.startXOffsetFromRight = Number(v); }],
+            startY: ['inp-startY', 'lbl-startY', v => { revParams.startYOffset = Number(v); }],
+            upY:    ['inp-upY',    'lbl-upY',    v => { revParams.upTargetY = Number(v); }],
+            arcY:   ['inp-arcY',   'lbl-arcY',   v => { revParams.arcControlY = Number(v); }],
+            arcX:   ['inp-arcX',   'lbl-arcX',   v => { revParams.arcDeltaX = Number(v); }],
+            step:   ['inp-step',   'lbl-step',   v => { revParams.arcStep = Number(v); }],
+            upSpd:  ['inp-upSpd',  'lbl-upSpd',  v => { revParams.speedUp = Number(v); }],
+            rightSpd:['inp-rightSpd','lbl-rightSpd', v => { revParams.speedRight = Number(v); }]
+        };
+
+        Object.keys(map).forEach(k => {
+            const [inpId, lblId, applyFn] = map[k];
+            const inp = document.getElementById(inpId);
+            const lbl = document.getElementById(lblId);
+            if (!inp || !lbl) return;
+            const updateLabel = v => {
+                // keep step displayed with 3 decimals if needed
+                if (inp.step && parseFloat(inp.step) < 1) lbl.textContent = parseFloat(v).toFixed(3);
+                else lbl.textContent = v;
+            };
+            updateLabel(inp.value);
+            inp.addEventListener('input', (e) => updateLabel(e.target.value));
+            inp.addEventListener('change', (e) => applyFn(e.target.value));
+        });
+
+        document.getElementById('btn-apply-rev').addEventListener('click', () => {
+            // apply all current input values to revParams
+            Object.keys(map).forEach(k => {
+                const [inpId, , applyFn] = map[k];
+                const inp = document.getElementById(inpId);
+                if (!inp) return;
+                applyFn(inp.value);
+            });
+            // restart reverse animation to pick up new params
+            stopReverseThreePhase();
+            setTimeout(() => startReverseThreePhase(), 30);
+        });
+
+        document.getElementById('btn-randomize-rev').addEventListener('click', () => {
+            const rand = (min,max,step=1) => Math.round((Math.random()*(max-min)+min)/step)*step;
+            const sx = rand(200,700,10);
+            const sy = rand(0,200,5);
+            const uy = rand(120,Math.max(150, Math.round(window.innerHeight*0.6)),5);
+            const aY = rand(40,280,5);
+            const aX = rand(80,500,10);
+            const st = +(Math.random()*0.02 + 0.006).toFixed(3);
+            const su = +(Math.random()*4 + 0.6).toFixed(2);
+            const sr = +(Math.random()*5 + 0.6).toFixed(2);
+
+            document.getElementById('inp-startX').value = sx; document.getElementById('lbl-startX').textContent = sx;
+            document.getElementById('inp-startY').value = sy; document.getElementById('lbl-startY').textContent = sy;
+            document.getElementById('inp-upY').value = uy;   document.getElementById('lbl-upY').textContent = uy;
+            document.getElementById('inp-arcY').value = aY;  document.getElementById('lbl-arcY').textContent = aY;
+            document.getElementById('inp-arcX').value = aX;  document.getElementById('lbl-arcX').textContent = aX;
+            document.getElementById('inp-step').value = st;  document.getElementById('lbl-step').textContent = st;
+            document.getElementById('inp-upSpd').value = su; document.getElementById('lbl-upSpd').textContent = su;
+            document.getElementById('inp-rightSpd').value = sr; document.getElementById('lbl-rightSpd').textContent = sr;
+
+            // apply and restart
+            document.getElementById('btn-apply-rev').click();
+        });
+    })();
 
     // ---- legs / arms / pedestrians ----
     const legFrames = ['media/nogi1.png','media/nogi2.png','media/nogi3.png'];
@@ -1425,256 +1254,21 @@
                 el.style.animationPlayState = 'running';
                 el.style.display = 'block';
                 el.style.opacity = '1';
-                el.style.visibility = 'visible';
-                // Если это скелет — делаем видимыми head/torso
-                if (el.classList.contains('skeleton') || el.classList.contains('skeleton2')) {
-                    const head = el.querySelector('.head');
-                    const torso = el.querySelector('.torso');
-                    if (head) head.style.visibility = 'visible';
-                    if (torso) torso.style.visibility = 'visible';
-                }
             } else {
                 el.classList.add('paused');
                 el.style.animationPlayState = 'paused';
                 el.style.display = 'none';
                 el.style.opacity = '0';
-                el.style.visibility = 'hidden';
-                if (el.classList.contains('skeleton') || el.classList.contains('skeleton2')) {
-                    const head = el.querySelector('.head');
-                    const torso = el.querySelector('.torso');
-                    if (head) head.style.visibility = 'hidden';
-                    if (torso) torso.style.visibility = 'hidden';
-                }
             }
         }
     }
-    function safeResetPedestriansAnimations() {
-        const sel = [
-            '.pedestrian-horizontal',
-            '.pedestrian-horizontal-unique',
-            '.pedestrian-vertical',
-            '.pedestrian-vertical-unique',
-            '.pedestrian-vertical-reverse',
-            '.pedestrian-vertical-reverse-unique'
-        ].join(',');
-
-        const nodes = Array.from(document.querySelectorAll(sel));
-        nodes.forEach(el => {
-            const r = el.getBoundingClientRect();
-            const maxDim = Math.max(window.innerWidth, window.innerHeight);
-            if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return;
-            const cs = getComputedStyle(el);
-            const animName = (cs.animationName || '').toString();
-            if (!/walk|walk-horizontal|walk-vertical|drive/i.test(animName)) return;
-
-            el.classList.remove('paused');
-            el.style.display = 'block';
-            el.style.opacity = '1';
-            el.style.visibility = 'visible';
-            el.style.animationPlayState = 'running';
-
-            // gentle restart of CSS animation
-            const prevAnim = el.style.animation || '';
-            el.style.animation = 'none';
-            void el.offsetWidth;
-            el.style.animation = prevAnim || '';
-            if (el.style.transform && /translate\(|scale\(/.test(el.style.transform)) {
-                el.style.transform = '';
-            }
-        });
-
-        if (typeof pedestriansData !== 'undefined' && Array.isArray(pedestriansData)) {
-            pedestriansData.forEach(d => {
-                if (!d || !d.el) return;
-                const el = d.el;
-                const r = el.getBoundingClientRect();
-                const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return;
-                el.classList.remove('paused');
-                el.style.display = 'block';
-                el.style.opacity = '1';
-                el.style.visibility = 'visible';
-                if (el.style.transform && /translate\(|scale\(/.test(el.style.transform)) el.style.transform = '';
-            });
-        }
-
-        skeletonsAll.forEach(sk => {
-            const cs = getComputedStyle(sk);
-            const visible = sk.style.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
-            const head = sk.querySelector('.head');
-            const torso = sk.querySelector('.torso');
-            if (visible) {
-                if (head) head.style.visibility = 'visible';
-                if (torso) torso.style.visibility = 'visible';
-            } else {
-                if (head) head.style.visibility = 'hidden';
-                if (torso) torso.style.visibility = 'hidden';
-            }
-        });
-    }
-    const resetPedestriansAnimations = safeResetPedestriansAnimations;
-    function enforcePedestrianDirectionsByClass() {
-        const maxDim = Math.max(window.innerWidth, window.innerHeight);
-
-        const frontVerticals = Array.from(document.querySelectorAll('.pedestrian-vertical, .pedestrian-vertical-unique, .skeleton'));
-        frontVerticals.forEach(el => {
-            try {
-                const r = el.getBoundingClientRect();
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return; // skip giant elements
-                el.style.animationDirection = 'normal';
-                el.classList.remove('bottom-to-top');
-                if (!el.classList.contains('top-to-bottom')) el.classList.add('top-to-bottom');
-                el.classList.remove('paused'); el.style.display = 'block'; el.style.opacity = '1'; el.style.visibility = 'visible'; el.style.animationPlayState = 'running';
-                const prev = el.style.animation || '';
-                el.style.animation = 'none'; void el.offsetWidth; el.style.animation = prev || '';
-                const head = el.querySelector && el.querySelector('.head');
-                const torso = el.querySelector && el.querySelector('.torso');
-                if (head && torso) { head.style.zIndex = 10; torso.style.zIndex = 5; head.style.visibility = 'visible'; torso.style.visibility = 'visible'; }
-            } catch (e) {}
-        });
-        const backVerticals = Array.from(document.querySelectorAll('.pedestrian-vertical-reverse, .pedestrian-vertical-reverse-unique, .skeleton2'));
-        backVerticals.forEach(el => {
-            try {
-                const r = el.getBoundingClientRect();
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return; // skip giant elements
-                el.style.animationDirection = 'reverse';
-                el.classList.remove('top-to-bottom');
-                if (!el.classList.contains('bottom-to-top')) el.classList.add('bottom-to-top');
-                el.classList.remove('paused'); el.style.display = 'block'; el.style.opacity = '1'; el.style.visibility = 'visible'; el.style.animationPlayState = 'running';
-                const prev = el.style.animation || '';
-                el.style.animation = 'none'; void el.offsetWidth; el.style.animation = prev || '';
-                const head = el.querySelector && el.querySelector('.head');
-                const torso = el.querySelector && el.querySelector('.torso');
-                if (head && torso) { head.style.zIndex = 5; torso.style.zIndex = 10; head.style.visibility = 'visible'; torso.style.visibility = 'visible'; }
-            } catch (e) {}
-        });
-    }
-
-    let currentScenario = null;
-
-    // ---- Safe reset for pedestrians (does not touch large non-animated items) ----
-    function safeResetPedestriansAnimations() {
-        const sel = [
-            '.pedestrian-horizontal',
-            '.pedestrian-horizontal-unique',
-            '.pedestrian-vertical',
-            '.pedestrian-vertical-unique',
-            '.pedestrian-vertical-reverse',
-            '.pedestrian-vertical-reverse-unique'
-        ].join(',');
-
-        const nodes = Array.from(document.querySelectorAll(sel));
-        nodes.forEach(el => {
-            // skip very large elements (prevent touching big foreground sprites)
-            const r = el.getBoundingClientRect();
-            const maxDim = Math.max(window.innerWidth, window.innerHeight);
-            if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return;
-
-            // Only touch elements that actually have a walk animation (avoid unrelated elements)
-            const cs = getComputedStyle(el);
-            const animName = (cs.animationName || '').toString();
-            if (!/walk|walk-horizontal|walk-vertical|drive/i.test(animName)) return;
-
-            el.classList.remove('paused');
-            el.style.display = 'block';
-            el.style.opacity = '1';
-            el.style.visibility = 'visible';
-            el.style.animationPlayState = 'running';
-
-            // gentle restart of CSS animation
-            const prevAnim = el.style.animation || '';
-            el.style.animation = 'none';
-            void el.offsetWidth;
-            el.style.animation = prevAnim || '';
-            // clear inline translate/scale only if it looks like a start-offset we added
-            if (el.style.transform && /translate\(|scale\(/.test(el.style.transform)) {
-                el.style.transform = '';
-            }
-        });
-
-        if (typeof pedestriansData !== 'undefined' && Array.isArray(pedestriansData)) {
-            pedestriansData.forEach(d => {
-                if (!d || !d.el) return;
-                const el = d.el;
-                const r = el.getBoundingClientRect();
-                const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return;
-                el.classList.remove('paused');
-                el.style.display = 'block';
-                el.style.opacity = '1';
-                el.style.visibility = 'visible';
-                if (el.style.transform && /translate\(|scale\(/.test(el.style.transform)) el.style.transform = '';
-            });
-        }
-
-        // Для скелетов: если они видимы по классам, покажем head/torso
-        skeletonsAll.forEach(sk => {
-            const cs = getComputedStyle(sk);
-            const visible = sk.style.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
-            const head = sk.querySelector('.head');
-            const torso = sk.querySelector('.torso');
-            if (visible) {
-                if (head) head.style.visibility = 'visible';
-                if (torso) torso.style.visibility = 'visible';
-            } else {
-                if (head) head.style.visibility = 'hidden';
-                if (torso) torso.style.visibility = 'hidden';
-            }
-        });
-    }
-
-    // alias for backward-compat (some code calls resetPedestriansAnimations)
-    const resetPedestriansAnimations = safeResetPedestriansAnimations;
-
-    // ---- Enforce pedestrian directions by class (safe) ----
-    function enforcePedestrianDirectionsByClass() {
-        const maxDim = Math.max(window.innerWidth, window.innerHeight);
-        // front-like verticals -> top-to-bottom
-        const frontVerticals = Array.from(document.querySelectorAll('.pedestrian-vertical, .pedestrian-vertical-unique, .skeleton'));
-        frontVerticals.forEach(el => {
-            try {
-                const r = el.getBoundingClientRect();
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return; // skip giant elements
-                el.style.animationDirection = 'normal';
-                el.classList.remove('bottom-to-top');
-                if (!el.classList.contains('top-to-bottom')) el.classList.add('top-to-bottom');
-                el.classList.remove('paused'); el.style.display = 'block'; el.style.opacity = '1'; el.style.visibility = 'visible'; el.style.animationPlayState = 'running';
-                const prev = el.style.animation || '';
-                el.style.animation = 'none'; void el.offsetWidth; el.style.animation = prev || '';
-                const head = el.querySelector && el.querySelector('.head');
-                const torso = el.querySelector && el.querySelector('.torso');
-                if (head && torso) { head.style.zIndex = 10; torso.style.zIndex = 5; head.style.visibility = 'visible'; torso.style.visibility = 'visible'; }
-            } catch (e) {}
-        });
-
-        // back-like verticals -> bottom-to-top (reverse)
-        const backVerticals = Array.from(document.querySelectorAll('.pedestrian-vertical-reverse, .pedestrian-vertical-reverse-unique, .skeleton2'));
-        backVerticals.forEach(el => {
-            try {
-                const r = el.getBoundingClientRect();
-                if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return; // skip giant elements
-                el.style.animationDirection = 'reverse';
-                el.classList.remove('top-to-bottom');
-                if (!el.classList.contains('bottom-to-top')) el.classList.add('bottom-to-top');
-                el.classList.remove('paused'); el.style.display = 'block'; el.style.opacity = '1'; el.style.visibility = 'visible'; el.style.animationPlayState = 'running';
-                const prev = el.style.animation || '';
-                el.style.animation = 'none'; void el.offsetWidth; el.style.animation = prev || '';
-                const head = el.querySelector && el.querySelector('.head');
-                const torso = el.querySelector && el.querySelector('.torso');
-                if (head && torso) { head.style.zIndex = 5; torso.style.zIndex = 10; head.style.visibility = 'visible'; torso.style.visibility = 'visible'; }
-            } catch (e) {}
-        });
-    }
-
-    // current scenario store
-    let currentScenario = null;
 
     function applyScenario(n) {
-        currentScenario = n;
         buttons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`[data-gesture="${n}"]`)?.classList.add('active');
         activeScenarioLabel.textContent = `Сценарий: ${scenarios[n].name}`;
 
+        // ensure sequences are fully reset before applying
         stopMainArc();
         stopReverseThreePhase();
         hardResetAnimations();
@@ -1688,71 +1282,7 @@
                 });
             } else setElementsState(carsHorizontal, false);
 
-            // vertical cars on/off
             setElementsState(carsVertical, scenarios[n].verticalCars === 'go');
-
-            if (n === 4) {
-<<<<<<< Updated upstream
-                // pedestrians: horizontal off, vertical on
-=======
->>>>>>> Stashed changes
-                setElementsState(pedestriansH, false);
-                setElementsState(pedestriansUniqueH, false);
-
-                setElementsState(pedestriansV, true);
-                setElementsState(pedestriansUniqueV, true);
-                setElementsState(pedestriansReverse, true);
-
-<<<<<<< Updated upstream
-                // set animationDirection by side (but we'll later enforce by class)
-=======
->>>>>>> Stashed changes
-                const midX = window.innerWidth / 2;
-                const verticalEls = [
-                    ...document.querySelectorAll('.pedestrian-vertical, .pedestrian-vertical-unique, .pedestrian-vertical-reverse, .pedestrian-vertical-reverse-unique')
-                ];
-                verticalEls.forEach(el => {
-                    const r = el.getBoundingClientRect();
-                    const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                    if (r.width > maxDim * 0.6 || r.height > maxDim * 0.6) return;
-                    el.classList.remove('paused'); el.style.display = 'block'; el.style.opacity = '1'; el.style.visibility = 'visible'; el.style.animationPlayState = 'running';
-                    const centerX = r.left + r.width / 2;
-                    if (centerX > midX) el.style.animationDirection = 'reverse';
-                    else el.style.animationDirection = 'normal';
-                    const prev = el.style.animation || '';
-                    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = prev || '';
-                });
-
-                if (Array.isArray(window.pedestriansData)) {
-                    window.pedestriansData.forEach(d => {
-                        if (!d || !d.el) return;
-                        d.el.classList.add('paused');
-<<<<<<< Updated upstream
-                        d.el.style.left = '-120vw';           // вместо display:none
-=======
-                        d.el.style.left = '-120vw';
->>>>>>> Stashed changes
-                        d.el.style.opacity = '0';
-                        d.el.style.visibility = 'hidden';
-                    });
-                }
-            }
-
-<<<<<<< Updated upstream
-            // update car sprites
-            updateVerticalCarSprites();
-
-            // enforce pedestrian directions using class (this ensures front/back behave correctly)
-            enforcePedestrianDirectionsByClass();
-
-            // reset small pedestrian animations safely
-=======
-            updateVerticalCarSprites();
-            enforcePedestrianDirectionsByClass();
-
-
->>>>>>> Stashed changes
-            resetPedestriansAnimations();
 
             if (scenarios[n].pedestriansH === 'go' || scenarios[n].pedestriansH === 'all') {
                 setElementsState(pedestriansH, true); setElementsState(pedestriansUniqueH, true);
@@ -1773,14 +1303,6 @@
                 startMainArc();
                 startReverseThreePhase();
             }
-
-<<<<<<< Updated upstream
-            // Поменять позу регулятора (по ПДД-назначению, как вы просили).
-            // Согласно вашим указаниям:
-            // 1 — правая рука вперед, 3 — стоп (рука вверх), 4 — по линии рук (нейтраль).
-=======
->>>>>>> Stashed changes
-            setRegulatorPose(n);
         }, 50);
     }
 
@@ -1807,34 +1329,14 @@
 
     requestAnimationFrame(animate);
 
-<<<<<<< Updated upstream
     // start default
-=======
->>>>>>> Stashed changes
     applyScenario(1);
-    updateVerticalCarSprites();
-    enforcePedestrianDirectionsByClass();
-    resetPedestriansAnimations();
-<<<<<<< Updated upstream
 
-    // preload regulator poses early
-    preloadRegulatorImages();
-
-    // on resize update params and sprites
-=======
-    preloadRegulatorImages();
-
->>>>>>> Stashed changes
+    // on resize update params
     window.addEventListener('resize', () => {
         mainParams.centerX = Math.round(window.innerWidth * 0.5);
         mainParams.startY = Math.round(window.innerHeight * 0.35);
         revParams.upTargetY = Math.round(window.innerHeight * 0.45);
-
-        setTimeout(() => {
-            if (currentScenario !== 4) updateVerticalCarSprites();
-            enforcePedestrianDirectionsByClass();
-            resetPedestriansAnimations();
-        }, 50);
     });
 
 </script>

@@ -1,0 +1,541 @@
+:root {
+    --car-speed-horizontal: 15s;
+    --car-speed-vertical: 15s;
+    --pedestrian-speed: 30s;
+    --skeleton-transition: 0.8s;
+    --car-width-h: 160px;
+    --car-width-v: 200px;
+    --pedestrian-w: 40px;
+    --pedestrian-h: 60px;
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#scene {
+    width: 110vw;
+    height: 110vh;
+    position: relative;
+    background: url('media/main.png') no-repeat center 60% / 75%;
+    perspective: 1500px;
+}
+
+/* Hint to browser about animations to reduce painting cost */
+.car-horizontal, .car-vertical, .skeleton, .skeleton2, .pedestrian, .pedestrian-vertical-reverse {
+    will-change: transform, opacity;
+}
+
+/* Скрываем анимируемые элементы по умолчанию (чтобы не было миганий до запуска JS) */
+.car-horizontal, .car-vertical, .pedestrian, .skeleton, .skeleton2 {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* === МАШИНЫ ГОРИЗОНТАЛЬНЫЕ === */
+.car-horizontal {
+    position: absolute;
+    width: var(--car-width-h);
+    z-index: 10;
+}
+
+/* FORCE: при задержке показывать from-кадр */
+.car-horizontal.left-to-right,
+.car-horizontal.right-to-left,
+.car-vertical.bottom-to-top,
+.car-vertical.top-to-bottom,
+.car-vertical-unique-tb,
+.car-vertical-unique-bt,
+.pedestrian-horizontal,
+.pedestrian-horizontal-unique,
+.pedestrian-vertical,
+.pedestrian-vertical-unique,
+.pedestrian-vertical-reverse,
+.pedestrian-vertical-reverse-unique {
+    animation-fill-mode: both;
+}
+
+.car-horizontal.left-to-right {
+    animation: drive-lr var(--car-speed-horizontal) linear infinite;
+}
+
+.car-horizontal.right-to-left {
+    animation: drive-rl var(--car-speed-horizontal) linear infinite;
+    transform: scaleX(-1);
+}
+
+.car-horizontal.paused,
+.car-vertical.paused,
+.pedestrian.paused,
+.skeleton.paused,
+.skeleton2.paused,
+.pedestrian-vertical.paused,
+.pedestrian-horizontal.paused {
+    animation-play-state: paused !important;
+}
+
+.car-horizontal .car-body {
+    width: 100%;
+    position: relative;
+    bottom: 10px;
+}
+
+.car-horizontal .wheel {
+    position: absolute;
+    width: 18%;
+    animation: rotate-wheel 0.5s linear infinite;
+}
+
+.car-horizontal .front-wheel { bottom: 5%; right: 10%; }
+.car-horizontal .back-wheel { bottom: 5%; left: 11%; }
+
+@keyframes drive-lr {
+    from { transform: translateX(calc(100vw + 220px)); }
+    to { transform: translateX(-220px); }
+}
+
+@keyframes drive-rl {
+    from { transform: translateX(-220px) scaleX(-1); }
+    to { transform: translateX(calc(100vw + 220px)) scaleX(-1); }
+}
+
+@keyframes rotate-wheel {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
+
+/* === МАШИНЫ ВЕРТИКАЛЬНЫЕ === */
+.car-vertical {
+    position: absolute;
+    width: var(--car-width-v);
+    z-index: 5;
+}
+
+.car-vertical img {
+    width: 100%;
+    height: auto;
+}
+
+.car-vertical.bottom-to-top {
+    animation: drive-tb var(--car-speed-vertical) linear infinite;
+}
+
+.car-vertical.top-to-bottom {
+    animation: drive-bt var(--car-speed-vertical) linear infinite;
+}
+
+@keyframes drive-bt {
+    from { transform: translate(38vw, 85vh) scale(1); }
+    to { transform: translate(46.5vw, -5vh) scale(0.05); }
+}
+@keyframes drive-tb {
+    from { transform: translate(54vw, -7vh) scale(0.05); }
+    to { transform: translate(60vw, 85vh) scale(1); }
+}
+
+.car-vertical-unique-tb {
+    animation: drive-unique-tb var(--car-speed-vertical) linear infinite;
+}
+@keyframes drive-unique-tb {
+    0% { transform: translate(43.1vw, -5vh) scale(0.05) ; }
+    40% { transform: translate(53vw, 30vh) scale(0.5) ; }
+    70% { transform: translate(59vw, 60vh) scale(0.8) ; }
+    100% { transform: translate(60vw, 75vh) scale(1) ; }
+}
+
+.car-vertical-unique-bt {
+    animation: drive-unique-bt var(--car-speed-vertical) linear infinite;
+}
+
+.car-horizontal {
+    left: 10px;
+    top: 10px;
+    position: absolute;
+    animation: none; /* Отключите анимацию для отладки */
+}
+@keyframes drive-unique-bt {
+    0% { transform: translate(23vw, 85vh) scale(1) ; }
+    40% { transform: translate(30vw, 45vh) scale(0.8) ; }
+    70% { transform: translate(37vw, 15vh) scale(0.4) ; }
+    100% { transform: translate(43vw, -5vh) scale(0.05) ; }
+}
+
+/* === Turning Reverse Car Trajectory === */
+.special-turn-container#yogurt-turning-car-reverse {
+    animation: reverse-trajectory 5s linear infinite;
+}
+
+@keyframes reverse-trajectory {
+    0% { transform: translate(50vw, 85vh) scale(0.2) rotate(0deg); }  /* Убедимся, что начало отображается */
+    30% { transform: translate(60vw, 60vh) scale(0.7) rotate(-30deg); }
+    60% { transform: translate(40vw, 40vh) scale(1) rotate(-45deg); }
+    100% { transform: translate(25vw, 20vh) scale(1.2) rotate(-70deg); }
+}
+
+/* Remaining styles follow: */
+
+/* Пешеходы */
+.pedestrian {
+    position: absolute;
+    width: var(--pedestrian-w);
+    height: var(--pedestrian-h);
+    z-index: 15;
+    transform-origin: center bottom;
+}
+.skeleton, .skeleton2 {
+    z-index: 100;
+    transform-style: preserve-3d;
+    position: absolute;
+}
+
+.pedestrian-horizontal {
+    animation: walk-horizontal var(--pedestrian-speed) linear infinite;
+    top: 32%;
+}
+
+/* Добавил анимацию по умолчанию для вертикальных пешеходов */
+.pedestrian-vertical {
+    position: absolute;
+    width: var(--pedestrian-w);
+    height: var(--pedestrian-h);
+    z-index: 6;
+    animation: walk-vertical var(--pedestrian-speed) linear infinite;
+}
+
+.skeleton .head, .skeleton2 .head { transform-origin: center center; }
+.skeleton .arm.left, .skeleton .arm.right,
+.skeleton2 .arm.left, .skeleton2 .arm.right { transform-origin: center top; }
+
+/* Пешеход (визуальные стили) */
+.pedestrian::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    top: 0;
+    left: 10px;
+}
+
+.pedestrian::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 30px;
+    background: #4ecdc4;
+    top: 22px;
+    left: 12px;
+    border-radius: 5px;
+}
+
+.pedestrian-vertical-reverse {
+    position: absolute;
+    width: var(--pedestrian-w);
+    height: var(--pedestrian-h);
+    z-index: 4;
+    transform-origin: center bottom;
+    /* используем те же keyframes, но проигрываем в обратную сторону */
+    animation: walk-vertical var(--pedestrian-speed) linear infinite;
+    animation-direction: reverse;
+}
+
+.pedestrian-vertical-reverse-unique {
+    animation: walk-vertical-unique var(--pedestrian-speed) linear infinite;
+    animation-direction: reverse;
+}
+
+@keyframes walk-vertical-reverse {
+    0% { transform: translate(105vh, -4vh) scale(0.01) }
+    100% { ;transform: translate(110vw, 100vh) scale(0.12); }
+}
+
+@keyframes walk-horizontal {
+    from { transform: translateX(-600px) scale(0.05); }
+    to { transform: translateX(calc(100vw + 60px)) scale(0.07); }
+}
+
+@keyframes walk-vertical {
+    from { transform: translate(53.5vw, -1vh) scale(0.01); }
+    to { transform: translate(100vw, 100vh) scale(0.12); }
+}
+
+.pedestrian-vertical-unique {
+    animation: walk-vertical-unique var(--pedestrian-speed) linear infinite;
+}
+
+@keyframes walk-vertical-unique {
+    0% { transform: translate(55vw, 3vh) scale(0.01); }
+    30% { transform: translate(41vw, 25vh) scale(0.05); }
+    60% { transform: translate(23vw, 60vh) scale(0.08); }
+    100% { transform: translate(8vw, 105vh) scale(0.12); }
+}
+
+.pedestrian-horizontal-unique {
+    animation: walk-horizontal-unique var(--pedestrian-speed) linear infinite;
+}
+
+@keyframes walk-horizontal-unique {
+    0% { transform: translateX(-60px) translateY(12vh) scale(0.05); }
+    30% { transform: translateX(30vw) translateY(12vh) scale(0.05); }
+    60% { transform: translateX(60vw) translateY(12vh) scale(0.05); }
+    100% { transform: translateX(calc(100vw + 60px)) translateY(12vh) scale(0.05); }
+}
+
+/* ВТОРИЧНЫЕ СТИЛИ СКЕЛЕТА (голова по умолчанию над туловищем) */
+/* ВАЖНО: scope селекторы к .skeleton/.skeleton2, чтобы не применялись глобально */
+.skeleton .head, .skeleton2 .head {
+    position: absolute;
+    top: 100px;
+    left: 270px;
+    width: 327px;
+    height: 496px;
+    background: url('media/golova.png') no-repeat center / contain;
+    z-index: 10; /* по умолчанию голова выше туловища */
+    /* скрываем визуально до момента, когда скелет активен (устраняет "гигантов" при загрузке) */
+    visibility: hidden;
+}
+
+.skeleton .torso, .skeleton2 .torso {
+    position: absolute;
+    top: 400px;
+    left: 60px;
+    width: 737px;
+    height: 837px;
+    background: url('media/telo.png') no-repeat center / contain;
+    transform-origin: top center;
+    z-index: 5; /* туловище ниже по умолчанию */
+    visibility: hidden;
+}
+
+/* Для пешеходов, которые идут СНИЗУ→ВВЕРХ, голова должна быть под туловищем */
+.pedestrian-vertical-reverse .head,
+.pedestrian-vertical-reverse-unique .head {
+    z-index: 5;
+}
+.pedestrian-vertical-reverse .torso,
+.pedestrian-vertical-reverse-unique .torso {
+    z-index: 10;
+}
+
+.arm { position: absolute; }
+.arm.left { top: 600px; left: 600px; }
+.arm.right { top: 600px; left: 45px; }
+
+.upper-arm {
+    position: relative;
+    transform-origin: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.upper-arm.left {
+    width: 205px;
+    height: 444px;
+    background-image: url('media/levruka1.png');
+}
+
+.upper-arm.right {
+    width: 204px;
+    height: 458px;
+    background-image: url('media/pravruka1.png');
+}
+
+.forearm {
+    position: absolute;
+    transform-origin: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 20;
+}
+
+.forearm.left {
+    top: 344px;
+    left: 0;
+    width: 164px;
+    height: 382px;
+    background-image: url('media/levruka2.png');
+}
+
+.forearm.right {
+    top: 318px;
+    left: 0;
+    width: 163px;
+    height: 386px;
+    background-image: url('media/pravruka2.png');
+}
+
+.hand {
+    position: absolute;
+    transform-origin: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.hand.left {
+    top: 360px;
+    left: 50px;
+    width: 108px;
+    height: 194px;
+    background-image: url('media/levruka3.png');
+}
+
+.hand.right {
+    top: 350px;
+    left: 0;
+    width: 108px;
+    height: 194px;
+    background-image: url('media/pravruka3.png');
+}
+
+.legs-container {
+    position: absolute;
+    top: 1130px;
+    left: 210px;
+    width: 433px;
+    height: 752px;
+}
+
+.legs-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === КНОПКИ УПРАВЛЕНИЯ === */
+#scenarios-controls {
+    position: absolute;
+    right: 1300px;
+    bottom: 60px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+#scenarios-controls button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    text-align: left;
+    min-width: 220px;
+}
+
+#scenarios-controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+#scenarios-controls button:active {
+    transform: translateY(0);
+}
+
+#scenarios-controls button.active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.6);
+}
+
+.button-label {
+    display: block;
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+#active-scenario {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    z-index: 9998;
+    backdrop-filter: blur(10px);
+}
+
+/* Специфические стили для поворачивающей машины */
+.special-turn-container { position: absolute;  z-index: 12; width:180px; height:120px; pointer-events:none; }
+.special-turn-container img { width: 100%; display: block; }
+
+/* Колёса: присутствуют в ALL видах, но opacity управляется JS */
+.view-side .wheel, .view-front .wheel, .view-rotate .wheel {
+    width:33px; position:absolute; top:39px; opacity:0; z-index:30; transition: opacity 160ms linear;
+}
+.view-side .wheel.front, .view-front .wheel.front, .view-rotate .wheel.front { left:130px; }
+.view-side .wheel.back, .view-front .wheel.back, .view-rotate .wheel.back { left:20px; }
+
+@keyframes spin-slow { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+.spinning { animation: spin-slow 0.8s linear infinite; }
+
+.h-wrapper { position: relative; width: var(--car-width-h); }
+.h-wrapper .wheel { position: absolute; width: 18%; animation: rotate-wheel 0.5s linear infinite; }
+.h-wrapper .front-wheel { bottom: -13%; right: 10%; }
+.h-wrapper .back-wheel { bottom: -13%; left: 11%; }
+
+.path-L2C { top: 23%; animation: anim-L2C 5s linear forwards; }
+@keyframes anim-L2C { from { transform: translateX(-220px); } to { transform: translateX(calc(50vw - 80px)); } }
+.path-C2D { animation: anim-C2D 10s linear forwards; }
+@keyframes anim-C2D { from { transform: translate(15vw, 0vh) scale(0.2); } to { transform: translate(-25vw, 150vh) scale(0.25); } }
+
+.hidden { display: none !important; }
+.view-side, .view-rotate, .view-front { position:absolute; top:0; left:0; opacity:0; transition: opacity .25s ease; }
+.view-side:not(.hidden), .view-rotate:not(.hidden), .view-front:not(.hidden) { opacity:1; }
+
+:root {
+    --ped-vertical-animation: walk-vertical;
+    --ped-vertical-unique-animation: walk-vertical-unique;
+    --ped-vertical-reverse-animation: walk-vertical-reverse;
+    --ped-vertical-reverse-unique-animation: walk-vertical-unique;
+}
+
+.pedestrian-vertical,
+.skeleton.pedestrian-vertical {
+    animation-name: var(--ped-vertical-animation, walk-vertical) !important;
+}
+
+.pedestrian-vertical-unique,
+.skeleton.pedestrian-vertical-unique {
+    animation-name: var(--ped-vertical-unique-animation, walk-vertical-unique) !important;
+}
+
+.pedestrian-vertical-reverse,
+.skeleton2.pedestrian-vertical-reverse {
+    animation-name: var(--ped-vertical-reverse-animation, walk-vertical-reverse) !important;
+}
+
+/* ---------------- Регулировщик (позы) ---------------- */
+/* регулятор должен быть ниже машин (z-index < 5/10) но выше фона #scene */
+.regulator {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: auto;
+    z-index: 4; /* ниже машин (car-vertical z=5, car-horizontal z=10), выше текста фона */
+    pointer-events: none;
+}
+.regulator img { width: 100%; height: auto; display: block; transition: opacity 160ms ease; }
+/* ----------------------------------------------------- */
+
